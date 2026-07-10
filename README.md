@@ -1,21 +1,28 @@
-# React + TypeScript + Vite + shadcn/ui
+# README.md
 
-This is a template for a new Vite project with React, TypeScript, and shadcn/ui.
+# Project Nova (Frontend)
 
-## Adding components
+Project Nova is a high-performance web dashboard built to test, visualize, and interact with a complex multi-linked global supply chain database powered by an AI-driven Model Context Protocol (MCP) environment. This dashboard acts as the retail management interface for a sustainable, premium tech brand (like Fairphone/SimplePhone), rendering real-time metrics across 10 countries, 50-100 stores, serialized asset tracking, complex warranties, and modular repair lifecycle loops.
 
-To add components to your app, run the following command:
+## 🚀 Deployment Domains
 
-```bash
-npx shadcn@latest add button
-```
+- **Production Frontend:** [https://nova.abhiseck.dev](https://nova.abhiseck.dev)
+- **Production API Backend:** [https://api.nova.abhiseck.dev](https://api.nova.abhiseck.dev)
 
-This will place the ui components in the `src/components` directory.
+---
 
-## Using components
+## 🛠️ The Tech Stack
 
-To use the components in your app, import them as follows:
+The frontend architecture relies on a collection of modern libraries selected for type safety, state control, and fluid performance.
 
-```tsx
-import { Button } from "@/components/ui/button"
-```
+- **Core Framework:** React 19 + Vite (Single Page Application)
+- **Routing:** TanStack Router (Fully type-safe, structural file-based routing)
+- **Data Fetching:** TanStack Query v5 (Server state synchronization and caching)
+- **Form Architecture:** TanStack Form (High-performance, type-safe validation)
+- **Validation:** Zod (Runtime type validation and schema composition)
+- **State Management:** Zustand (Lightweight, atomic local UI state)
+- **Design & UI System:** TailwindCSS + Shadcn UI (Utilizing **Base UI** primitives)
+- **Icons:** Lucide React
+- **Animations:** Motion (formerly Framer Motion)
+- **HTTP Client:** Axios (Configured with global interceptors for the `api.nova.abhiseck.dev` domain)
+- **Utilities:** Day.js (Lightweight date manipulation), Nanoid (Client-side cryptographic ID generation)
