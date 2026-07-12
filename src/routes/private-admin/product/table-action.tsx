@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   ContextMenuContent,
+  ContextMenuGroup,
   ContextMenuItem,
   ContextMenuLabel,
   ContextMenuSeparator,
@@ -11,6 +12,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -104,13 +106,15 @@ export const TableAction = ({ data }: { data: ProductType }) => {
         </Button>}>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Action</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={onUpdate}>Update</DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive" onClick={onDelete}>
-          Delete
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Action</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
+          <DropdownMenuItem onClick={onUpdate}>Update</DropdownMenuItem>
+          <DropdownMenuItem className="text-destructive" onClick={onDelete}>
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -121,13 +125,15 @@ export const TableActionContextMenu = ({ data }: { data: ProductType }) => {
 
   return (
     <ContextMenuContent>
-      <ContextMenuLabel>Action</ContextMenuLabel>
-      <ContextMenuSeparator />
-      <ContextMenuItem onClick={onView}>View</ContextMenuItem>
-      <ContextMenuItem onClick={onUpdate}>Update</ContextMenuItem>
-      <ContextMenuItem className="text-destructive" onClick={onDelete}>
-        Delete
-      </ContextMenuItem>
+      <ContextMenuGroup>
+        <ContextMenuLabel>Action</ContextMenuLabel>
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={onView}>View</ContextMenuItem>
+        <ContextMenuItem onClick={onUpdate}>Update</ContextMenuItem>
+        <ContextMenuItem className="text-destructive" onClick={onDelete}>
+          Delete
+        </ContextMenuItem>
+      </ContextMenuGroup>
     </ContextMenuContent>
   );
 };

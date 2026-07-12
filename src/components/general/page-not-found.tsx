@@ -9,7 +9,9 @@ const PageNotFound = () => {
         <p className="text-xl mb-8">
           Oops! The page you're looking for doesn't exist.
         </p>
-        <Button render={<Link to="/" />}>Go back</Button>
+        <Button nativeButton={false} render={<Link to="/" />}>
+          Go back
+        </Button>
       </div>
     </main>
   );

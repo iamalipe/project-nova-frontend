@@ -25,7 +25,9 @@ const ErrorPage = (props: { error: Error }) => {
             {props.error.stack}
           </pre>
         )}
-        <Button render={<Link to="/" />}>Go back</Button>
+        <Button nativeButton={false} render={<Link to="/" />}>
+          Go back
+        </Button>
       </div>
     </main>
   );

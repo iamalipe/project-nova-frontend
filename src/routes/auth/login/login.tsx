@@ -104,7 +104,7 @@ const Login = () => {
             </Link>
           </div>
           <div className="flex gap-2 items-center">
-            <Button variant="outline" render={<Link to="/register" />}>
+            <Button variant="outline" nativeButton={false} render={<Link to="/register" />}>
               Register
             </Button>
             <ThemeToggle />
@@ -112,7 +112,7 @@ const Login = () => {
         </div>
         <div className="hidden md:flex gap-4 justify-between px-4 py-4">
           <ThemeToggle />
-          <Button variant="outline" render={<Link to="/register" />}>
+          <Button variant="outline" nativeButton={false} render={<Link to="/register" />}>
             Register
           </Button>
         </div>

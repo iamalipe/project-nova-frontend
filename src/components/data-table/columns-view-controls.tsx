@@ -4,6 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -32,18 +33,20 @@ const ColumnsViewControls = <T,>(props: ColumnsViewControlsProps<T>) => {
         {isMobile ? "" : "View"}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {hidableColumns.map((column) => (
-          <DropdownMenuCheckboxItem
-            key={column.id}
-            className="capitalize"
-            checked={column.columnVisibility}
-            onCheckedChange={(checked) => column.toggleVisibility(checked)}
-          >
-            {column.label}
-          </DropdownMenuCheckboxItem>
-        ))}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {hidableColumns.map((column) => (
+            <DropdownMenuCheckboxItem
+              key={column.id}
+              className="capitalize"
+              checked={column.columnVisibility}
+              onCheckedChange={(checked) => column.toggleVisibility(checked)}
+            >
+              {column.label}
+            </DropdownMenuCheckboxItem>
+          ))}
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
