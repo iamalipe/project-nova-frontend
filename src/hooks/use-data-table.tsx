@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid"
+import { useMemo } from "react"
 import type { SortType } from "./use-sort"
 
 export type DataTableColumn<T> = {
@@ -69,8 +70,12 @@ export type DataTableType<T> = {
 }
 
 export const useDataTable = <T,>(props: DataTableProps<T>): DataTableType<T> => {
-  const data = props.data || []
-  const columns = props.columns || []
+  // Memoized so `data`/`columns` keep a stable reference across re-renders
+  // when the caller doesn't pass `data`/`columns` (or passes the same
+  // array back) — otherwise `props.data || []` mints a brand new empty
+  // array every render, which would defeat the id memoization below.
+  const data = useMemo(() => props.data || [], [props.data])
+  const columns = useMemo(() => props.columns || [], [props.columns])
   const rowCount = props.rowCount || data.length
   const paginationState = {
     pageSize: props.paginationState?.pageSize ?? rowCount,
@@ -78,7 +83,17 @@ export const useDataTable = <T,>(props: DataTableProps<T>): DataTableType<T> => 
   }
   const sortState = props.sortState || { orderBy: "", order: "desc" }
 
-  const newColumns: DataTableColumnFinal<T>[] = columns.map((item) => {
+  // Columns rarely supply an explicit `id`, but the fallback still needs to
+  // be stable across re-renders (it's used as the column's React key and
+  // drives visibility-toggle identity). Generating it inline on every call
+  // would mint a new id every render and reset that identity for no reason.
+  // Memoizing on the `columns` array reference means the ids stay stable
+  // across re-renders caused by unrelated state changes, while still
+  // regenerating if the caller ever swaps in a genuinely different columns
+  // array (columns are normally defined once, outside the component).
+  const fallbackColumnIds = useMemo(() => columns.map(() => nanoid()), [columns])
+
+  const newColumns: DataTableColumnFinal<T>[] = columns.map((item, index) => {
     const findVisibility = props.columnVisibility?.[item.key as string] ?? true
     return {
       ...item,
@@ -88,7 +103,7 @@ export const useDataTable = <T,>(props: DataTableProps<T>): DataTableType<T> => 
       classNameHeader: item.classNameHeader ?? "",
       classNameRow: item.classNameRow ?? "",
       columnVisibility: findVisibility,
-      id: item.id ?? nanoid(),
+      id: item.id ?? fallbackColumnIds[index],
       toggleVisibility: (visible?: boolean) => {
         if (visible === undefined) {
           props.onToggleVisibilityChange?.({
@@ -105,9 +120,23 @@ export const useDataTable = <T,>(props: DataTableProps<T>): DataTableType<T> => 
     }
   })
 
-  const rows: DataTableRows<T>[] = data.map((item) => {
+  // Fallback ids for rows that don't carry a natural unique field. `data`
+  // typically comes from an API response and gets a fresh array (and item)
+  // reference on every genuine refetch, but the *same* reference across
+  // re-renders caused by unrelated state changes (sibling re-render, sort
+  // toggle, etc). Memoizing on the `data` reference means the fallback ids
+  // stay stable across those unrelated re-renders (preserving selection /
+  // visibility identity) while still regenerating on a real data refresh.
+  const fallbackRowIds = useMemo(() => data.map(() => nanoid()), [data])
+
+  const rows: DataTableRows<T>[] = data.map((item, index) => {
+    const naturalId = (item as { id?: unknown; _id?: unknown })?.id ??
+      (item as { id?: unknown; _id?: unknown })?._id
     return {
-      id: nanoid(),
+      id:
+        typeof naturalId === "string" || typeof naturalId === "number"
+          ? String(naturalId)
+          : fallbackRowIds[index],
       data: item,
     }
   })

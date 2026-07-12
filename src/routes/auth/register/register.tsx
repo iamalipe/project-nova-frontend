@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { currentUserQueryKey } from "@/hooks/api-query/auth-query";
 import { queryClient } from "@/hooks/use-api-query";
 import { handleFormError } from "@/lib/form";
-import { cn } from "@/lib/utils";
+import { cn, isSafeRedirectPath } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { PawPrintIcon } from "lucide-react";
@@ -30,16 +30,11 @@ const formSchema = z
 
 export type FormSchemaType = z.infer<typeof formSchema>;
 
-// Define the search params type
-export type SearchParams = {
-  redirect?: string;
-};
-
 const Register = () => {
   const navigate = useNavigate();
   const { redirect } = useSearch({
     from: "/_auth/register",
-  }) as SearchParams;
+  });
 
   const defaultValues: Partial<FormSchemaType> = {
     email: "",
@@ -69,19 +64,10 @@ const Register = () => {
       form.reset();
       // await apiQuery.auth.getCurrentUser();
       queryClient.invalidateQueries({ queryKey: currentUserQueryKey });
-      // If there's a redirect URL, navigate to it, otherwise go to the home page
-      if (redirect) {
-        // Handle external URLs or relative paths
-        if (redirect.startsWith("http")) {
-          // eslint-disable-next-line react-hooks/immutability
-          window.location.href = redirect;
-        } else {
-          // For internal app routes
-          navigate({ to: redirect });
-        }
-      } else {
-        navigate({ to: "/admin" });
-      }
+      // Only ever navigate to a same-origin relative path from `redirect` —
+      // it's a user-controlled query param, so anything else is rejected to
+      // avoid an open redirect.
+      navigate({ to: isSafeRedirectPath(redirect) ? redirect : "/app" });
     } catch (error) {
       handleFormError({
         form,
@@ -130,16 +116,16 @@ const Register = () => {
             </a>
           </div>
           <div className="flex gap-2 items-center">
-            <Button variant="outline" asChild>
-              <Link to="/login">Login</Link>
+            <Button variant="outline" render={<Link to="/login" />}>
+              Login
             </Button>
             <ThemeToggle />
           </div>
         </div>
         <div className="hidden md:flex gap-4 justify-between px-4 py-4">
           <ThemeToggle />
-          <Button variant="outline" asChild>
-            <Link to="/login">Login</Link>
+          <Button variant="outline" render={<Link to="/login" />}>
+            Login
           </Button>
         </div>
         <div className="flex flex-col max-w-sm justify-center mx-auto flex-1 max-md:p-6 max-md:rounded-md">
@@ -277,16 +263,16 @@ const Register = () => {
               <span className="relative z-10 px-2 bg-background">Or</span>
             </div>
             <div className="grid gap-2 grid-cols-2">
-              <Button variant="outline" className="w-full">
+              <Button type="button" variant="outline" className="w-full">
                 Github
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button type="button" variant="outline" className="w-full">
                 Google
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button type="button" variant="outline" className="w-full">
                 Passkey
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button type="button" variant="outline" className="w-full">
                 Magic Link
               </Button>
             </div>

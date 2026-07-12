@@ -13,7 +13,12 @@ const _randomWidth = [
   `w-[55%]`,
   `w-[60%]`,
 ];
-const FormSkeleton = () => {
+interface FormSkeletonProps {
+  /** Number of skeleton field blocks to render. Defaults to 1. */
+  count?: number;
+}
+
+const FormSkeletonField = () => {
   const randomWidth = useMemo(
     () => _randomWidth[getRandomInt(0, _randomWidth.length - 1)],
     []
@@ -27,6 +32,18 @@ const FormSkeleton = () => {
       <Skeleton className={cn(["h-4", randomWidth])} aria-hidden="true" />
       <Skeleton className="h-10 w-full" aria-hidden="true" />
     </div>
+  );
+};
+
+const FormSkeleton = ({ count = 1 }: FormSkeletonProps = {}) => {
+  if (count <= 1) return <FormSkeletonField />;
+
+  return (
+    <>
+      {Array.from({ length: count }).map((_, index) => (
+        <FormSkeletonField key={index} />
+      ))}
+    </>
   );
 };
 

@@ -12,6 +12,43 @@ function isPromise(value: any) {
   );
 }
 
+/**
+ * Shared state/behavior for buttons that show a spinner and disable
+ * themselves while an async `onClick` handler is in flight.
+ *
+ * Centralizes the "loading" logic so `AsyncButton`, `AsyncIconButton`,
+ * and `AsyncRefreshButton` only need to differ in visual presentation.
+ */
+function useAsyncButtonState({
+  onClick,
+  loading,
+}: {
+  onClick: ButtonProps["onClick"];
+  loading?: boolean;
+}) {
+  const [isHandlingClick, setHandlingClick] = useState(false);
+
+  const isLoading = loading === undefined ? isHandlingClick : loading;
+
+  const handleClick: ButtonProps["onClick"] = async (...args) => {
+    if (typeof onClick === "function" && !isHandlingClick) {
+      const returnValue = onClick(...args);
+      if (isPromise(returnValue)) {
+        try {
+          setHandlingClick(true);
+          await returnValue;
+          setHandlingClick(false);
+        } catch (e) {
+          setHandlingClick(false);
+          throw e;
+        }
+      }
+    }
+  };
+
+  return { isLoading, handleClick };
+}
+
 type AsyncButtonProps = ButtonProps & {
   loading?: boolean;
   loadingText?: string;
@@ -24,29 +61,10 @@ export function AsyncButton({
   loadingText = "Loading...",
   ...restProps
 }: AsyncButtonProps) {
-  const [isHandlingClick, setHandlingClick] = useState(false);
+  const { isLoading, handleClick } = useAsyncButtonState({ onClick, loading });
 
-  const isLoading = loading === undefined ? isHandlingClick : loading;
   return (
-    <Button
-      {...restProps}
-      disabled={disabled || isLoading}
-      onClick={async (...args) => {
-        if (typeof onClick === "function" && !isHandlingClick) {
-          const returnValue = onClick(...args);
-          if (isPromise(returnValue)) {
-            try {
-              setHandlingClick(true);
-              await returnValue;
-              setHandlingClick(false);
-            } catch (e) {
-              setHandlingClick(false);
-              throw e;
-            }
-          }
-        }
-      }}
-    >
+    <Button {...restProps} disabled={disabled || isLoading} onClick={handleClick}>
       {isLoading ? (
         <>
           <LoaderCircle className="animate-spin" />
@@ -71,29 +89,14 @@ export function AsyncIconButton({
   loadingIcon = <LoaderCircle className="animate-spin" />,
   ...restProps
 }: AsyncIconButtonProps) {
-  const [isHandlingClick, setHandlingClick] = useState(false);
+  const { isLoading, handleClick } = useAsyncButtonState({ onClick, loading });
 
-  const isLoading = loading === undefined ? isHandlingClick : loading;
   return (
     <Button
       size="icon"
       {...restProps}
       disabled={disabled || isLoading}
-      onClick={async (...args) => {
-        if (typeof onClick === "function" && !isHandlingClick) {
-          const returnValue = onClick(...args);
-          if (isPromise(returnValue)) {
-            try {
-              setHandlingClick(true);
-              await returnValue;
-              setHandlingClick(false);
-            } catch (e) {
-              setHandlingClick(false);
-              throw e;
-            }
-          }
-        }
-      }}
+      onClick={handleClick}
     >
       {isLoading ? <>{loadingIcon}</> : children}
     </Button>
@@ -109,29 +112,14 @@ export function AsyncRefreshButton({
   disabled,
   ...restProps
 }: AsyncRefreshButtonProps) {
-  const [isHandlingClick, setHandlingClick] = useState(false);
+  const { isLoading, handleClick } = useAsyncButtonState({ onClick, loading });
 
-  const isLoading = loading === undefined ? isHandlingClick : loading;
   return (
     <Button
       size="icon"
       {...restProps}
       disabled={disabled || isLoading}
-      onClick={async (...args) => {
-        if (typeof onClick === "function" && !isHandlingClick) {
-          const returnValue = onClick(...args);
-          if (isPromise(returnValue)) {
-            try {
-              setHandlingClick(true);
-              await returnValue;
-              setHandlingClick(false);
-            } catch (e) {
-              setHandlingClick(false);
-              throw e;
-            }
-          }
-        }
-      }}
+      onClick={handleClick}
     >
       <RefreshCcw className={cn([isLoading ? "animate-spin" : ""])} />
     </Button>

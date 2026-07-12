@@ -12,6 +12,8 @@ import ActionControls from "./action-controls";
 import { TableActionContextMenu, TableSelectAction } from "./table-action";
 import tableColumns from "./table-columns";
 
+const PRODUCT_ROUTE_FROM = "/app/product";
+
 type ProductProps = {
   rawQuery: UseQueryResult<ApiProductGetAll, ApiNormalResponse | Error>;
 };
@@ -24,12 +26,12 @@ const Product = ({ rawQuery }: ProductProps) => {
   const pagination = usePagination({
     initialPageSize: queryData.pagination.limit,
     initialPageIndex: queryData.pagination.page,
-    routeFrom: "/app/product",
+    routeFrom: PRODUCT_ROUTE_FROM,
   });
 
   const sort = useSort({
     initialSort: queryData.sort,
-    routeFrom: "/app/product",
+    routeFrom: PRODUCT_ROUTE_FROM,
   });
 
   const dataTable = useDataTable({

@@ -25,11 +25,11 @@ const ColumnsViewControls = <T,>(props: ColumnsViewControlsProps<T>) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant={"outline"} size={isMobile ? "icon" : "default"}>
-          <Grid2x2 className="md:mr-2 h-4 w-4" />
-          {isMobile ? "" : "View"}
-        </Button>
+      <DropdownMenuTrigger
+        render={<Button variant={"outline"} size={isMobile ? "icon" : "default"} />}
+      >
+        <Grid2x2 className="md:mr-2 h-4 w-4" />
+        {isMobile ? "" : "View"}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>

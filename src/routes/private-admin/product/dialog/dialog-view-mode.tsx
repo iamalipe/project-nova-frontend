@@ -88,8 +88,8 @@ const DialogViewMode = ({ data }: ProductDialogProps) => {
             )}
           </div>
           <DialogFooter className="flex-none gap-2">
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+            <DialogClose render={<Button variant="outline" />}>
+              Cancel
             </DialogClose>
             {data && <Button onClick={onEdit}>Edit</Button>}
           </DialogFooter>

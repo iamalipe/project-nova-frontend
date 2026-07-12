@@ -1,4 +1,5 @@
 import type { ProductType } from "@/api/product-api";
+import { AsyncButton } from "@/components/custom/async-button";
 import FormController from "@/components/form/form-controller";
 import { Button } from "@/components/ui/button";
 import {
@@ -211,27 +212,31 @@ const DialogMain = ({ data, state }: ProductDialogProps) => {
             />
           </div>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" data-testid="cancel-button">
-                Cancel
-              </Button>
+            <DialogClose
+              render={<Button variant="outline" data-testid="cancel-button" />}
+            >
+              Cancel
             </DialogClose>
             {state.mode === "CREATE" ? (
-              <Button
+              <AsyncButton
                 data-testid="create-button"
+                loading={form.formState.isSubmitting}
                 onClick={form.handleSubmit(onSubmit)}
                 type="submit"
+                loadingText="Creating..."
               >
                 Create
-              </Button>
+              </AsyncButton>
             ) : (
-              <Button
+              <AsyncButton
                 data-testid="update-button"
+                loading={form.formState.isSubmitting}
                 onClick={form.handleSubmit(onUpdate)}
                 type="submit"
+                loadingText="Updating..."
               >
                 Update
-              </Button>
+              </AsyncButton>
             )}
           </DialogFooter>
         </DialogContent>

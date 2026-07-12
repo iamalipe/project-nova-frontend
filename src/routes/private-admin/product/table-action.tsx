@@ -20,16 +20,20 @@ import apiQuery from "@/hooks/use-api-query";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { validateAndStringify } from "@/lib/generic-validation";
 import { useTableRowsSelect } from "@/store/use-table-columns-select-store";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Menu, XIcon } from "lucide-react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { dialogStateZodSchema } from "../private-admin-route";
 
-export const TableAction = ({ data }: { data: ProductType }) => {
+// Shared view/update/delete logic used by both the dropdown-menu and
+// context-menu presentations of the row actions. Query-cache invalidation
+// (not router.invalidate()) is the app-wide strategy: apiQuery.product's
+// create/update/delete helpers already invalidate productQueryKey
+// internally, so callers don't need to do anything extra to refresh data.
+const useProductRowActions = (data: ProductType) => {
   const navigate = useNavigate({ from: "/app/product" });
-  const isMobile = useIsMobile();
-  const router = useRouter();
+
   const onView = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: "Product",
@@ -38,12 +42,13 @@ export const TableAction = ({ data }: { data: ProductType }) => {
     });
     if (!ds) return;
     navigate({
-      search: (prev:any) => ({
+      search: (prev) => ({
         ...prev,
         ds: ds,
       }),
     });
   };
+
   const onUpdate = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: "Product",
@@ -52,7 +57,7 @@ export const TableAction = ({ data }: { data: ProductType }) => {
     });
     if (!ds) return;
     navigate({
-      search: (prev:any) => ({
+      search: (prev) => ({
         ...prev,
         ds: ds,
       }),
@@ -61,14 +66,20 @@ export const TableAction = ({ data }: { data: ProductType }) => {
 
   const onDelete = async () => {
     const deleteRes = await alertPopup.delete();
-    if (deleteRes) {
+    if (deleteRes.response) {
       const res = await apiQuery.product.delete(data.id);
       if (res.success) {
         toast.success(res.message || "Record Deleted");
-        router.invalidate();
       }
     }
   };
+
+  return { onView, onUpdate, onDelete };
+};
+
+export const TableAction = ({ data }: { data: ProductType }) => {
+  const isMobile = useIsMobile();
+  const { onView, onUpdate, onDelete } = useProductRowActions(data);
 
   if (isMobile) {
     return (
@@ -106,47 +117,7 @@ export const TableAction = ({ data }: { data: ProductType }) => {
 };
 
 export const TableActionContextMenu = ({ data }: { data: ProductType }) => {
-  const navigate = useNavigate({ from: "/app/product" });
-  const router = useRouter();
-  const onView = async () => {
-    const ds = validateAndStringify(dialogStateZodSchema, {
-      dialog: "Product",
-      id: data.id,
-      mode: "VIEW",
-    });
-    if (!ds) return;
-    navigate({
-      search: (prev:any) => ({
-        ...prev,
-        ds: ds,
-      }),
-    });
-  };
-  const onUpdate = async () => {
-    const ds = validateAndStringify(dialogStateZodSchema, {
-      dialog: "Product",
-      id: data.id,
-      mode: "UPDATE",
-    });
-    if (!ds) return;
-    navigate({
-      search: (prev:any) => ({
-        ...prev,
-        ds: ds,
-      }),
-    });
-  };
-
-  const onDelete = async () => {
-    const deleteRes = await alertPopup.delete();
-    if (deleteRes) {
-      const res = await apiQuery.product.delete(data.id);
-      if (res.success) {
-        toast.success(res.message || "Record Deleted");
-        router.invalidate();
-      }
-    }
-  };
+  const { onView, onUpdate, onDelete } = useProductRowActions(data);
 
   return (
     <ContextMenuContent>
@@ -212,8 +183,21 @@ export const TableSelectAction = () => {
 
   const onDelete = async () => {
     const deleteRes = await alertPopup.delete();
-    if (deleteRes) {
-      console.log("onDelete", selectedRows);
+    if (!deleteRes.response) return;
+
+    const results = await Promise.allSettled(
+      selectedRows.map((id) => apiQuery.product.delete(id))
+    );
+    const failedCount = results.filter((r) => r.status === "rejected").length;
+
+    clearRowSelect();
+
+    if (failedCount > 0) {
+      toast.error(
+        `${failedCount} of ${selectedRows.length} record(s) failed to delete`
+      );
+    } else {
+      toast.success("Selected records deleted");
     }
   };
 

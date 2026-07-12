@@ -2,7 +2,7 @@ import { Outlet } from "@tanstack/react-router";
 // import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-// import AlertPopupProvider from "@/components/alert-popup/alert-popup-provider";
+import AlertPopupProvider from "@/components/alert-popup/alert-popup-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 const RootLayout = () => {
@@ -10,7 +10,7 @@ const RootLayout = () => {
     <>
       <Outlet />
       <Toaster position="top-center" richColors visibleToasts={10} />
-      {/* <AlertPopupProvider /> */}
+      <AlertPopupProvider />
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       {/* <TanStackRouterDevtools /> */}
     </>

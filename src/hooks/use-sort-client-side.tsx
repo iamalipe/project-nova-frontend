@@ -1,10 +1,8 @@
 import dayjs from "dayjs"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useMemo } from "react"
+import { useSortState, type SortType } from "./use-sort"
 
-export type SortType = {
-  orderBy: string
-  order: "asc" | "desc"
-}
+export type { SortType }
 
 type UseSortClientSideProps = {
   initialSort?: SortType
@@ -13,28 +11,12 @@ type UseSortClientSideProps = {
 }
 
 const useSortClientSide = (props: UseSortClientSideProps) => {
-  const initialSort = props.initialSort ?? {
-    orderBy: "",
-    order: "desc",
-  }
-
-  const onChange = props.onChange
-
-  const [sorting, setSorting] = useState<SortType>(initialSort)
   const dataArray = useMemo(() => props.data || [], [props.data])
-  const isFirstRender = useRef(true)
 
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    if (onChange) onChange(sorting)
-  }, [sorting, onChange])
-
-  const onSortChange = (newSort: SortType) => {
-    setSorting(newSort)
-  }
+  const { sorting, setSorting, onSortChange } = useSortState(
+    props.initialSort,
+    props.onChange,
+  )
 
   const sortedDataArray = useMemo(() => {
     if (!sorting.orderBy) return dataArray

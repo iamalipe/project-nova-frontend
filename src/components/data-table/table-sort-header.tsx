@@ -24,26 +24,35 @@ const TableSortHeader = <T,>(props: TableSortHeaderProps<T>) => {
 
   const ordered = findSort ? dataTable.sort?.order : undefined;
 
+  const ariaSort =
+    ordered === "asc"
+      ? "ascending"
+      : ordered === "desc"
+        ? "descending"
+        : "none";
+
   return (
-    <TableHead key={item.id} data-testid={item.key}>
+    <TableHead key={item.id} data-testid={item.key} aria-sort={ariaSort}>
       <div className="flex items-center space-x-2">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="-ml-3 h-8 data-[state=open]:bg-accent"
-              data-testid={`${item.key as string}-sort-button`}
-            >
-              <span>{item.label}</span>
-              {ordered === "asc" ? (
-                <ArrowUp />
-              ) : ordered === "desc" ? (
-                <ArrowDown />
-              ) : (
-                <ChevronsUpDown />
-              )}
-            </Button>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="sm"
+                className="-ml-3 h-8 data-[state=open]:bg-accent"
+                data-testid={`${item.key as string}-sort-button`}
+              />
+            }
+          >
+            <span>{item.label}</span>
+            {ordered === "asc" ? (
+              <ArrowUp />
+            ) : ordered === "desc" ? (
+              <ArrowDown />
+            ) : (
+              <ChevronsUpDown />
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuItem

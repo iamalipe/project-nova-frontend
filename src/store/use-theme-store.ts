@@ -1,13 +1,21 @@
 import { create } from "zustand";
 
 const themeStorageKey = "app-theme";
+const isBrowser = typeof window !== "undefined";
 
 export type ThemeStore = {
   theme: "dark" | "light" | "system";
   setTheme: (theme: ThemeStore["theme"]) => void; // Updated type for setTheme
 };
 
+const getStoredTheme = (): ThemeStore["theme"] =>
+  (isBrowser &&
+    (localStorage.getItem(themeStorageKey) as ThemeStore["theme"])) ||
+  "system";
+
 const onThemeChange = (theme: ThemeStore["theme"]) => {
+  if (!isBrowser) return;
+
   localStorage.setItem(themeStorageKey, theme);
 
   const root = window.document.documentElement;
@@ -27,8 +35,7 @@ const onThemeChange = (theme: ThemeStore["theme"]) => {
 };
 
 const useThemeStore = create<ThemeStore>((set) => ({
-  theme:
-    (localStorage.getItem(themeStorageKey) as ThemeStore["theme"]) || "light",
+  theme: getStoredTheme(),
   setTheme: (theme) => {
     set({ theme });
     onThemeChange(theme); // Ensure `onThemeChange` is called on theme update
@@ -36,10 +43,6 @@ const useThemeStore = create<ThemeStore>((set) => ({
 }));
 
 // Initialize the theme on app load
-(() => {
-  const initialTheme =
-    (localStorage.getItem(themeStorageKey) as ThemeStore["theme"]) || "light";
-  onThemeChange(initialTheme);
-})();
+onThemeChange(getStoredTheme());
 
 export default useThemeStore;

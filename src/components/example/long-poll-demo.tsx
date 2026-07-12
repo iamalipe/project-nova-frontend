@@ -10,7 +10,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
+import { cn, sleep } from "@/lib/utils"
+
+// Delay between consecutive poll attempts so the loop isn't a tight,
+// unthrottled request cycle.
+const POLL_DELAY_MS = 1000
 
 interface PollData {
   count: number
@@ -69,7 +73,10 @@ export default function LongPollDemo() {
           isPollingRef.current = false
         } else {
           currentCount = data.count
-          // Instantly poll again for the next tick
+          // Wait a beat before polling again so this isn't a tight,
+          // unthrottled request loop.
+          await sleep(POLL_DELAY_MS)
+          if (!isPollingRef.current) return
           void poll()
         }
       } catch (err: any) {
@@ -99,6 +106,22 @@ export default function LongPollDemo() {
     setStatus("idle")
   }
 
+  // Disconnect whenever the dialog closes (Escape, overlay click, or the
+  // close button) — not just on unmount. The dialog's content (and thus this
+  // component's lifecycle) is not guaranteed to unmount when it visually
+  // closes, so this handler (not just an unmount effect) is the reliable
+  // signal to tear down the connection. Wired into `onOpenChange` below
+  // rather than a `useEffect` on `isOpen`, since calling setState
+  // synchronously from an effect body is discouraged (this is an event
+  // handler, not an effect).
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    if (!open) {
+      disconnectPoll()
+    }
+  }
+
+  // Belt-and-braces cleanup on actual unmount.
   useEffect(() => {
     return () => {
       isPollingRef.current = false
@@ -111,7 +134,7 @@ export default function LongPollDemo() {
   const latestMessage = messages[0]
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button
           variant="outline"
           className="relative group overflow-hidden border-primary/20 hover:border-primary/50 transition-all duration-300"

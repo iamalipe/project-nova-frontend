@@ -7,7 +7,7 @@ import { productAPI } from "./product-api";
 
 // Axios instance configuration
 export const axiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: `${API_URL}/v1`,
   withCredentials: true,
 });
 

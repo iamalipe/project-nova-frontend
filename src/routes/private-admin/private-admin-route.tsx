@@ -23,14 +23,13 @@ const privateAdminRoute = createRoute({
   loaderDeps: ({ search }) =>
     createTypeSafeLoaderDeps(privateRouteZodSchema, search),
   validateSearch: privateRouteZodSchema,
-  beforeLoad: async ({ location}) => {
+  beforeLoad: async ({ location }) => {
     const res = await apiQuery.auth.getCurrentUser();
     if (!res || !res.success) {
       throw redirect({
         to: "/login",
-        search: location.href !== "/" && {
-          redirect: location.href,
-        },
+        search:
+          location.pathname === "/" ? undefined : { redirect: location.href },
       });
     }
   },

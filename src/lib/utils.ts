@@ -47,6 +47,21 @@ export function sanitizeObject(obj: unknown): unknown {
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Only allows same-origin, relative paths (a single leading "/").
+ * Rejects protocol-relative ("//host/..") and absolute URLs so a
+ * user-controlled "redirect" query param can't be used for an open redirect.
+ */
+export function isSafeRedirectPath(path: unknown): path is string {
+  return (
+    typeof path === "string" &&
+    path.length > 0 &&
+    path.startsWith("/") &&
+    !path.startsWith("//") &&
+    !path.startsWith("/\\")
+  );
+}
+
 export function getRandomInt(min: number, max: number): number {
   // Ensure the min and max are integers
   min = Math.ceil(min);

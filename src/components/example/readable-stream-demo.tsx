@@ -1,5 +1,5 @@
 import { Activity, Clock, Cpu, Play, Square } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -25,20 +25,18 @@ export default function ReadableStreamDemo() {
     "idle" | "connecting" | "connected" | "done" | "error"
   >("idle")
   const [messages, setMessages] = useState<StreamData[]>([])
-  const [abortController, setAbortController] = useState<AbortController | null>(
-    null
-  )
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   const connectStream = async () => {
-    if (abortController) {
-      abortController.abort()
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
     }
 
     setMessages([])
     setStatus("connecting")
 
     const controller = new AbortController()
-    setAbortController(controller)
+    abortControllerRef.current = controller
 
     try {
       const streamUrl = `${import.meta.env.VITE_API_URL || "/api"}/readable-stream-demo`
@@ -96,30 +94,45 @@ export default function ReadableStreamDemo() {
         setStatus("error")
       }
     } finally {
-      setAbortController(null)
+      abortControllerRef.current = null
     }
   }
 
   const disconnectStream = () => {
-    if (abortController) {
-      abortController.abort()
-      setAbortController(null)
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
     }
     setStatus("idle")
   }
 
+  // Disconnect whenever the dialog closes (Escape, overlay click, or the
+  // close button) — not just on unmount. This component stays mounted at the
+  // trigger's call site even when the dialog's portal content is closed, so
+  // this handler (not just an unmount effect) is the reliable signal to
+  // teardown. Wired into `onOpenChange` below rather than a `useEffect` on
+  // `isOpen`, since calling setState synchronously from an effect body is
+  // discouraged (this is an event handler, not an effect).
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    if (!open) {
+      disconnectStream()
+    }
+  }
+
+  // Belt-and-braces cleanup on actual unmount.
   useEffect(() => {
     return () => {
-      if (abortController) {
-        abortController.abort()
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
       }
     }
-  }, [abortController])
+  }, [])
 
   const latestMessage = messages[0]
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button
           variant="outline"
           className="relative group overflow-hidden border-primary/20 hover:border-primary/50 transition-all duration-300"

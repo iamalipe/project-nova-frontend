@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import type { DataTableType } from "@/hooks/use-data-table";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 import TableSortHeader from "./table-sort-header";
 
 export type DataTableProps<T> = {
@@ -19,31 +20,34 @@ export type DataTableProps<T> = {
 const DataTable = <T,>(props: DataTableProps<T>) => {
   const { dataTable, contextMenu } = props;
 
+  const visibleColumns = useMemo(
+    () => dataTable.columns.filter((item) => item.columnVisibility),
+    [dataTable.columns]
+  );
+
   return (
     <>
       <DataTableMobile dataTable={dataTable} />
       <Table>
         <TableHeader className="z-10">
           <TableRow className="border-b-0 table-header-box-shadow">
-            {dataTable.columns
-              .filter((item) => item.columnVisibility)
-              .map((item) =>
-                item.isSortable ? (
-                  <TableSortHeader
-                    dataTable={dataTable}
-                    key={item.id}
-                    item={item}
-                  />
-                ) : (
-                  <TableHead
-                    className={cn(["min-w-10", item.classNameHeader])}
-                    key={item.id}
-                    data-testid={item.key}
-                  >
-                    {item.labelRender ? item.labelRender(item) : item.label}
-                  </TableHead>
-                )
-              )}
+            {visibleColumns.map((item) =>
+              item.isSortable ? (
+                <TableSortHeader
+                  dataTable={dataTable}
+                  key={item.id}
+                  item={item}
+                />
+              ) : (
+                <TableHead
+                  className={cn(["min-w-10", item.classNameHeader])}
+                  key={item.id}
+                  data-testid={item.key}
+                >
+                  {item.labelRender ? item.labelRender(item) : item.label}
+                </TableHead>
+              )
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -51,46 +55,40 @@ const DataTable = <T,>(props: DataTableProps<T>) => {
             if (contextMenu)
               return (
                 <ContextMenu key={item.id as string}>
-                  <ContextMenuTrigger asChild>
-                    <TableRow key={item.id as string}>
-                      {dataTable.columns
-                        .filter((item) => item.columnVisibility)
-                        .map((colItem) => {
-                          return (
-                            <TableCell
-                              key={colItem.id}
-                              className={cn([colItem.classNameRow])}
-                              onContextMenu={(e) => {
-                                if (
-                                  colItem.key === "action" ||
-                                  colItem.key === "select"
-                                )
-                                  e.preventDefault();
-                              }}
-                            >
-                              {colItem.render(item.data)}
-                            </TableCell>
-                          );
-                        })}
-                    </TableRow>
+                  <ContextMenuTrigger render={<TableRow />}>
+                    {visibleColumns.map((colItem) => {
+                      return (
+                        <TableCell
+                          key={colItem.id}
+                          className={cn([colItem.classNameRow])}
+                          onContextMenu={(e) => {
+                            if (
+                              colItem.key === "action" ||
+                              colItem.key === "select"
+                            )
+                              e.preventDefault();
+                          }}
+                        >
+                          {colItem.render(item.data)}
+                        </TableCell>
+                      );
+                    })}
                   </ContextMenuTrigger>
                   {contextMenu?.(item.data)}
                 </ContextMenu>
               );
             return (
               <TableRow key={item.id as string}>
-                {dataTable.columns
-                  .filter((item) => item.columnVisibility)
-                  .map((colItem) => {
-                    return (
-                      <TableCell
-                        key={colItem.id}
-                        className={cn([colItem.classNameRow])}
-                      >
-                        {colItem.render(item.data)}
-                      </TableCell>
-                    );
-                  })}
+                {visibleColumns.map((colItem) => {
+                  return (
+                    <TableCell
+                      key={colItem.id}
+                      className={cn([colItem.classNameRow])}
+                    >
+                      {colItem.render(item.data)}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             );
           })}

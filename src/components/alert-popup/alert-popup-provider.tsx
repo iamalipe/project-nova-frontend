@@ -210,7 +210,15 @@ const AlertPopupProvider = () => {
     <>
       <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
         <AlertDialogContent>
-          <AlertDialogHeader>
+          {/*
+            aria-live="assertive" ensures screen readers announce the
+            title/description as soon as the dialog opens. base-ui's
+            AlertDialog primitives already wire up aria-modal, focus
+            trapping, and aria-labelledby/aria-describedby (via Title /
+            Description), so we only need to add the live-region piece
+            here — not duplicate the modal semantics.
+          */}
+          <AlertDialogHeader aria-live="assertive" aria-atomic="true">
             {options.title && (
               <AlertDialogTitle>{options.title}</AlertDialogTitle>
             )}

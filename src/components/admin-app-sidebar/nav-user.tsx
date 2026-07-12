@@ -17,7 +17,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import apiQuery from "@/hooks/use-api-query";
-import useCurrentUser from "@/hooks/useCurrentUser";
+import useCurrentUser from "@/hooks/use-current-user";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { BellIcon, CreditCardIcon, EllipsisVertical, LogOutIcon, UserCircleIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -31,9 +31,7 @@ export function NavUser() {
     currentUser?.lastName || ""
   }`;
   const email = currentUser?.email || "";
-  // @ts-ignore
-  const nameX = currentUser?.firstName?.[0] || currentUser?.fullName?.[0];
-  const nameShort = `${nameX || ""}${
+  const nameShort = `${currentUser?.firstName?.[0] || ""}${
     currentUser?.lastName?.[0] || ""
   }`.toUpperCase();
 
@@ -48,25 +46,27 @@ export function NavUser() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={avatar} alt={fullName} />
-                <AvatarFallback>
-                  {nameShort}
-                </AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{fullName}</span>
-                <span className="text-muted-foreground truncate text-xs">
-                  {email}
-                </span>
-              </div>
-              <EllipsisVertical className="ml-auto size-4"/>
-            </SidebarMenuButton>
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton
+                size="lg"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              />
+            }
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={avatar} alt={fullName} />
+              <AvatarFallback>
+                {nameShort}
+              </AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{fullName}</span>
+              <span className="text-muted-foreground truncate text-xs">
+                {email}
+              </span>
+            </div>
+            <EllipsisVertical className="ml-auto size-4"/>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
@@ -92,11 +92,9 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link to="/admin/profile">
-                  <UserCircleIcon />
-                  Profile
-                </Link>
+              <DropdownMenuItem render={<Link to="/admin/profile" />}>
+                <UserCircleIcon />
+                Profile
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCardIcon />

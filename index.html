@@ -5,6 +5,25 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Project Nova</title>
+    <script>
+      // Applies the persisted theme (or the OS preference for "system")
+      // before any stylesheet/module loads, to avoid a flash of the wrong
+      // theme while JS hydrates. Mirrors the logic in
+      // src/store/use-theme-store.ts (`onThemeChange`), including the same
+      // localStorage key ("app-theme") and default of "system".
+      try {
+        var theme = localStorage.getItem("app-theme") || "system";
+        var resolved =
+          theme === "system"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : theme;
+        document.documentElement.classList.add(resolved);
+      } catch (e) {
+        // Ignore — worst case is a brief flash, not a crash.
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

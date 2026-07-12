@@ -9,39 +9,26 @@ import {
   SidebarGroupContent,
   SidebarMenu,
 } from "@/components/ui/sidebar";
-import { ChartAreaIcon, Home, MessageSquare, Package, SquareKanban } from "lucide-react";
+import { useLocation } from "@tanstack/react-router";
+import { Home, Package } from "lucide-react";
 import { NavUser } from "./nav-user";
 
 const pageMenus: AdminAppSidebarMenuItemProps[] = [
   {
     title: "Home",
-    url: "/admin",
+    url: "/app",
     icon: <Home />,
   },
   {
     title: "Product",
-    url: "/admin/product",
+    url: "/app/product",
     icon: <Package />,
-  },
-  {
-    title: "Kanban",
-    url: "/admin/kanban",
-    icon: <SquareKanban />,
-  },
-  {
-    title: "AI Chat",
-    url: "/admin/ai-chat",
-    icon: <ChartAreaIcon />,
-  },
-  {
-    title: "React AI Chat",
-    url: "/admin/chat-react",
-    icon: <MessageSquare />,
   },
 ];
 
 export function AdminAppSidebar() {
   const items = [...pageMenus];
+  const { pathname } = useLocation();
 
   return (
     <Sidebar
@@ -55,7 +42,11 @@ export function AdminAppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <AdminAppSidebarMenuItem key={item.url} {...item} />
+                <AdminAppSidebarMenuItem
+                  key={item.url}
+                  {...item}
+                  isActive={pathname === item.url}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

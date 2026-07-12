@@ -12,6 +12,9 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { dialogStateZodSchema } from "../private-admin-route";
 
+const PRODUCT_ROUTE_FROM = "/app/product";
+const PRODUCT_DIALOG = "Product";
+
 export type ActionControlsProps<T> = {
   dataTable: DataTableType<T>;
   rawQuery: UseQueryResult<ApiProductGetAll, ApiNormalResponse | Error>;
@@ -22,9 +25,9 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
   const queryData = rawQuery.data;
   if (!queryData) throw Error("Something wrong");
 
-  const navigate = useNavigate({ from: "/app/product" });
+  const navigate = useNavigate({ from: PRODUCT_ROUTE_FROM });
   const searchParam = useSearch({
-    from: "/app/product",
+    from: PRODUCT_ROUTE_FROM,
   });
 
   const onRefresh = async () => {
@@ -33,7 +36,7 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
 
   const onCreate = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
-      dialog: "Product",
+      dialog: PRODUCT_DIALOG,
       mode: "CREATE",
     });
     if (!ds) return;
@@ -46,7 +49,7 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
   };
   const onAllProducts = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
-      dialog: "Product",
+      dialog: PRODUCT_DIALOG,
       mode: "VIEW-ALL",
     });
     if (!ds) return;

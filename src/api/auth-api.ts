@@ -1,6 +1,6 @@
 // auth-api.ts
-import { normalizeApiError, unwrapApiError } from "./api-utils";
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
+import { normalizeApiError, unwrapApiError } from "./api-utils";
 
 export type LoginPayload = {
   email: string;
@@ -67,11 +67,12 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
         config
       );
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        return null;
-      }
-      normalizeApiError(error);
+    } catch {
+      // if (axios.isAxiosError(error) && error.response?.status === 401) {
+      //   return null;
+      // }
+      // normalizeApiError(error);
+      return null
     }
   },
 

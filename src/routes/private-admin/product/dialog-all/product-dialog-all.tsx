@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import apiQuery from "@/hooks/use-api-query";
 import useQueryLoadingState from "@/hooks/use-query-loading-state";
-import { useDataTable } from "@/hooks/useDataTable";
-import usePaginationClientSide from "@/hooks/usePaginationClientSide";
-import useSortClientSide from "@/hooks/useSortClientSide";
+import { useDataTable } from "@/hooks/use-data-table";
+import usePaginationClientSide from "@/hooks/use-pagination-client-side";
+import useSortClientSide from "@/hooks/use-sort-client-side";
 import type { DialogStateType } from "@/routes/private-admin/private-admin-route";
 import { useNavigate } from "@tanstack/react-router";
 import tableColumns from "../table-columns";
@@ -23,7 +23,12 @@ export type ProductDialogProps = {
   data?: ProductType[];
 };
 const ProductDialogAll = ({ state }: ProductDialogProps) => {
-  const productQuery = apiQuery.product.useGetAll({ page: 0, limit: 100 });
+  // Intentionally not the route's search params: this dialog shows the full
+  // product list (ignoring the main table's server-side sort/filter/page)
+  // and instead sorts/paginates it client-side (see useSortClientSide /
+  // usePaginationClientSide below). `limit: 100` is the API's max page size,
+  // fetched as page 1 so the dialog has the largest single batch to work with.
+  const productQuery = apiQuery.product.useGetAll({ page: 1, limit: 100 });
   const { isLoading } = useQueryLoadingState([productQuery]);
 
   if (isLoading) return <DialogSkeleton />;
@@ -88,8 +93,8 @@ const DialogMain = ({ data }: ProductDialogProps) => {
             <TableFooter dataTable={dataTable} />
           </div>
           {/* <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+            <DialogClose render={<Button variant="outline" />}>
+              Cancel
             </DialogClose>
           </DialogFooter> */}
         </DialogContent>

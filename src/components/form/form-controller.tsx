@@ -54,8 +54,10 @@ const FormController = <T extends FieldValues>({
         const errorId = isError ? `${id}-error` : undefined;
         const descriptionId = errorId;
 
-        const valueLength = String(field.value ?? "").length;
-        const shouldShowBottomSection = isError || maxLength;
+        const isStringValue = typeof field.value === "string";
+        const valueLength = isStringValue ? field.value.length : undefined;
+        const shouldShowCounter = !!maxLength && isStringValue;
+        const shouldShowBottomSection = isError || shouldShowCounter;
 
         return (
           <div className={cn(["flex flex-col flex-1", className])}>
@@ -83,7 +85,7 @@ const FormController = <T extends FieldValues>({
                     {String(error.message)}
                   </p>
                 )}
-                {maxLength && (
+                {shouldShowCounter && (
                   <span className="text-xs text-muted-foreground ml-auto">
                     {valueLength}/{maxLength}
                   </span>

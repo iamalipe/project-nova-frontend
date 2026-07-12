@@ -88,6 +88,14 @@ export const getOneZodSchema = z.object({
   id: z.uuid("Invalid id"),
 });
 
+// Used by the login/register routes' `validateSearch`. The `redirect` value
+// still needs an `isSafeRedirectPath` check before use — this schema only
+// validates shape, not safety.
+export const redirectSearchSchema = z.object({
+  redirect: z.string().optional(),
+});
+export type RedirectSearchSchemaType = z.infer<typeof redirectSearchSchema>;
+
 export type FilteredLoaderDeps<T extends z.ZodObject<z.ZodRawShape>> = {
   [K in keyof z.infer<T>]: z.infer<T>[K];
 };

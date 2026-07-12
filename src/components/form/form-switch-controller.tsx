@@ -4,9 +4,12 @@ import { cn } from "@/lib/utils";
 import { useId } from "react";
 import {
   Controller,
+  type ControllerFieldState,
+  type ControllerRenderProps,
   type FieldValues,
   type Path,
   type UseFormReturn,
+  type UseFormStateReturn,
 } from "react-hook-form";
 
 interface FormSwitchControllerProps<T extends FieldValues> {
@@ -16,6 +19,19 @@ interface FormSwitchControllerProps<T extends FieldValues> {
   className?: string;
   classNameLabel?: string;
   classNameDiv?: string;
+  render?: ({
+    field,
+    fieldState,
+    formState,
+    isError,
+    ariaDescribedby,
+  }: {
+    field: ControllerRenderProps<T, Path<T>>;
+    fieldState: ControllerFieldState;
+    formState: UseFormStateReturn<T>;
+    isError: boolean;
+    ariaDescribedby: string | undefined;
+  }) => React.ReactElement;
 }
 
 const FormSwitchController = <T extends FieldValues>({
@@ -25,17 +41,19 @@ const FormSwitchController = <T extends FieldValues>({
   className,
   classNameLabel,
   classNameDiv,
+  render,
 }: FormSwitchControllerProps<T>) => {
   const id = useId();
   return (
     <Controller
       control={form.control}
       name={name}
-      render={({ field, fieldState }) => {
+      render={({ field, fieldState, formState }) => {
         const error = fieldState.error;
         const isError = !!error;
 
         const errorId = isError ? `${id}-error` : undefined;
+        const ariaDescribedby = errorId;
 
         return (
           <div className={cn(["flex flex-col flex-1", className])}>
@@ -51,12 +69,23 @@ const FormSwitchController = <T extends FieldValues>({
                   {label}
                 </Label>
               )}
-              <Switch
-                id={id}
-                name={field.name}
-                checked={field.value}
-                onCheckedChange={(check) => field.onChange(check)}
-              />
+              {render ? (
+                render({
+                  field,
+                  fieldState,
+                  formState,
+                  isError,
+                  ariaDescribedby,
+                })
+              ) : (
+                <Switch
+                  id={id}
+                  name={field.name}
+                  checked={field.value}
+                  onCheckedChange={(check) => field.onChange(check)}
+                  aria-describedby={ariaDescribedby}
+                />
+              )}
             </div>
             {isError && (
               <p id={errorId} className="text-xs text-destructive mt-1">
