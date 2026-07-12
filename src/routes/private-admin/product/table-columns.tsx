@@ -1,0 +1,58 @@
+import type { ProductType } from "@/api/product-api";
+import type { DataTableColumn } from "@/hooks/use-data-table";
+import { formatDate } from "@/lib/date-time";
+import { TableAction, TableRowsSelect } from "./table-action";
+
+const tableColumns: DataTableColumn<ProductType>[] = [
+  {
+    key: "select",
+    label: "Select",
+    labelRender: () => <TableRowsSelect type="header" />,
+    isSortable: false,
+    isHidable: false,
+    render: (record) => <TableRowsSelect type="row" data={record} />,
+    classNameHeader: "w-10",
+    classNameRow: "w-10",
+  },
+  {
+    label: "Name",
+    key: "name",
+    render: (record) => record.name,
+    isSortable: true,
+    classNameRow: "font-bold",
+  },
+  {
+    label: "Category",
+    key: "category",
+    render: (record) => record.category,
+    isSortable: true,
+  },
+  {
+    label: "Price",
+    key: "price",
+    render: (record) => record.price,
+    isSortable: true,
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (record) => record.description,
+    isSortable: true,
+  },
+  {
+    label: "Created At",
+    key: "createdAt",
+    render: (record) => formatDate(record.createdAt),
+    isSortable: true,
+  },
+  {
+    label: "Action",
+    key: "action",
+    render: (record) => <TableAction data={record} />,
+    isSortable: false,
+    classNameHeader: "w-10",
+    classNameRow: "w-10",
+  },
+];
+
+export default tableColumns;

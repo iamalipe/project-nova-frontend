@@ -1,19 +1,30 @@
 import * as React from "react"
 
+// TailwindCSS breakpoint is 768px=md
 const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  const [mql] = React.useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+      : null
+  )
 
-  React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
+  const subscribe = React.useCallback(
+    (callback: () => void) => {
+      if (!mql) return () => {}
+      mql.addEventListener("change", callback)
+      return () => mql.removeEventListener("change", callback)
+    },
+    [mql]
+  )
 
-  return !!isMobile
+  const getSnapshot = React.useCallback(() => {
+    return mql ? mql.matches : false
+  }, [mql])
+
+  const getServerSnapshot = () => false
+
+  return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }
+
