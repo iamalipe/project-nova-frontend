@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 
 const PageNotFound = () => {
   return (
@@ -7,9 +9,7 @@ const PageNotFound = () => {
         <p className="text-xl mb-8">
           Oops! The page you're looking for doesn't exist.
         </p>
-        {/* <Button asChild>
-          <Link to="..">Go back</Link>
-        </Button> */}
+        <Button render={<Link to="/" />}>Go back</Button>
       </div>
     </main>
   );
