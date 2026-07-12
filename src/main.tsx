@@ -7,7 +7,7 @@ import "@/style/custom.css";
 import "@/style/index.css";
 
 import { queryClient } from "@/hooks/use-api-query";
-import { routeTree } from "@/routes/root-route";
+import { routeTree } from "@/routes/route-tree";
 
 const router = createRouter({
   routeTree,

@@ -1,29 +1,31 @@
-import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
+import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu"
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import type { DataTableType } from "@/hooks/use-data-table";
-import { cn } from "@/lib/utils";
-import { useMemo } from "react";
-import TableSortHeader from "./table-sort-header";
+} from "@/components/ui/table"
+import type { DataTableType } from "@/hooks/use-data-table"
+import { cn } from "@/lib/utils"
+import { useMemo } from "react"
+import TableSortHeader from "./table-sort-header"
 
 export type DataTableProps<T> = {
-  dataTable: DataTableType<T>;
-  contextMenu?: (data: T) => React.ReactNode;
-};
+  dataTable: DataTableType<T>
+  contextMenu?: (data: T) => React.ReactNode
+  emptyMessage?: string
+}
 
 const DataTable = <T,>(props: DataTableProps<T>) => {
-  const { dataTable, contextMenu } = props;
+  const { dataTable, contextMenu, emptyMessage } = props
 
   const visibleColumns = useMemo(
     () => dataTable.columns.filter((item) => item.columnVisibility),
     [dataTable.columns]
-  );
+  )
 
   return (
     <>
@@ -50,75 +52,81 @@ const DataTable = <T,>(props: DataTableProps<T>) => {
             )}
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {dataTable.rows.map((item) => {
-            if (contextMenu)
+        {dataTable.rows.length > 0 ? (
+          <TableBody>
+            {dataTable.rows.map((item) => {
+              if (contextMenu)
+                return (
+                  <ContextMenu key={item.id as string}>
+                    <ContextMenuTrigger render={<TableRow />}>
+                      {visibleColumns.map((colItem) => {
+                        return (
+                          <TableCell
+                            key={colItem.id}
+                            className={cn([colItem.classNameRow])}
+                            onContextMenu={(e) => {
+                              if (
+                                colItem.key === "action" ||
+                                colItem.key === "select"
+                              )
+                                e.preventDefault()
+                            }}
+                          >
+                            {colItem.render(item.data)}
+                          </TableCell>
+                        )
+                      })}
+                    </ContextMenuTrigger>
+                    {contextMenu?.(item.data)}
+                  </ContextMenu>
+                )
               return (
-                <ContextMenu key={item.id as string}>
-                  <ContextMenuTrigger render={<TableRow />}>
-                    {visibleColumns.map((colItem) => {
-                      return (
-                        <TableCell
-                          key={colItem.id}
-                          className={cn([colItem.classNameRow])}
-                          onContextMenu={(e) => {
-                            if (
-                              colItem.key === "action" ||
-                              colItem.key === "select"
-                            )
-                              e.preventDefault();
-                          }}
-                        >
-                          {colItem.render(item.data)}
-                        </TableCell>
-                      );
-                    })}
-                  </ContextMenuTrigger>
-                  {contextMenu?.(item.data)}
-                </ContextMenu>
-              );
-            return (
-              <TableRow key={item.id as string}>
-                {visibleColumns.map((colItem) => {
-                  return (
-                    <TableCell
-                      key={colItem.id}
-                      className={cn([colItem.classNameRow])}
-                    >
-                      {colItem.render(item.data)}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
-        </TableBody>
+                <TableRow key={item.id as string}>
+                  {visibleColumns.map((colItem) => {
+                    return (
+                      <TableCell
+                        key={colItem.id}
+                        className={cn([colItem.classNameRow])}
+                      >
+                        {colItem.render(item.data)}
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        ) : (
+          <TableCaption className="mb-4">
+            {emptyMessage || "No record found."}
+          </TableCaption>
+        )}
       </Table>
     </>
-  );
-};
+  )
+}
 const DataTableMobile = <T,>(props: DataTableProps<T>) => {
-  const { dataTable } = props;
+  const { dataTable } = props
 
   const columnVisibility = dataTable.columns.filter(
     (item) => item.columnVisibility
-  );
+  )
 
   return (
     <>
-      <div className="flex flex-col md:hidden relative w-full overflow-auto flex-1 scrollbar-thin gap-4">
+      <div className="relative flex w-full flex-1 scrollbar-thin flex-col gap-4 overflow-auto md:hidden">
         {dataTable?.rows.map((item) => (
-          <div key={item.id} className="px-2 flex flex-col rounded-md border">
+          <div key={item.id} className="flex flex-col rounded-md border px-2">
             {columnVisibility.map((colItem, index) => (
               <div
                 key={colItem.id}
                 className={cn([
-                  "p-2 flex",
+                  "flex p-2",
                   columnVisibility.length - 1 !== index && "border-b",
                 ])}
               >
                 <div className="w-2/5">{colItem.label}</div>
-                <div className="text-sm text-muted-foreground w-3/5">
+                <div className="w-3/5 text-sm text-muted-foreground">
                   {colItem.render(item.data)}
                 </div>
               </div>
@@ -127,7 +135,7 @@ const DataTableMobile = <T,>(props: DataTableProps<T>) => {
         ))}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default DataTable;
+export default DataTable
