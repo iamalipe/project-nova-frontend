@@ -31,6 +31,9 @@ export type ApiProductGetAll = ApiNormalResponse & {
   config?: TableConfigType;
 };
 export type ApiProductGet = ApiNormalResponse & { data: ProductType };
+export type ApiProductDeleteMany = ApiNormalResponse & {
+  data: { count: number };
+};
 
 export type ApiProductGetAllParams = {
   page?: number;
@@ -87,6 +90,16 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
     unwrapApiError(async () => {
       const response = await axiosInstance.delete<ApiNormalResponse>(
         `/product/${id}`,
+        config,
+      );
+      return response.data;
+    }),
+
+  deleteMany: (ids: string[], config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.post<ApiProductDeleteMany>(
+        "/product/delete-many",
+        { ids },
         config,
       );
       return response.data;

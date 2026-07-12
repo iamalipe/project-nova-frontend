@@ -1,6 +1,6 @@
 import AdminAppSidebarMenuItem, {
   type AdminAppSidebarMenuItemProps,
-} from "@/components/admin-app-sidebar/admin-app-sidebar-menu-item";
+} from "@/components/admin-app-sidebar/admin-app-sidebar-menu-item"
 import {
   Sidebar,
   SidebarContent,
@@ -8,10 +8,10 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-} from "@/components/ui/sidebar";
-import { useLocation } from "@tanstack/react-router";
-import { Home, Package } from "lucide-react";
-import { NavUser } from "./nav-user";
+} from "@/components/ui/sidebar"
+import { useLocation } from "@tanstack/react-router"
+import { Home, Package } from "lucide-react"
+import { NavUser } from "./nav-user"
 
 const pageMenus: AdminAppSidebarMenuItemProps[] = [
   {
@@ -24,11 +24,11 @@ const pageMenus: AdminAppSidebarMenuItemProps[] = [
     url: "/app/product",
     icon: <Package />,
   },
-];
+]
 
 export function AdminAppSidebar() {
-  const items = [...pageMenus];
-  const { pathname } = useLocation();
+  const items = [...pageMenus]
+  const { pathname } = useLocation()
 
   return (
     <Sidebar
@@ -40,7 +40,7 @@ export function AdminAppSidebar() {
         <SidebarGroup>
           {/* <SidebarGroupLabel>Pages</SidebarGroupLabel> */}
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-1">
               {items.map((item) => (
                 <AdminAppSidebarMenuItem
                   key={item.url}
@@ -56,5 +56,5 @@ export function AdminAppSidebar() {
         <NavUser />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

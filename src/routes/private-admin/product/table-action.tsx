@@ -1,14 +1,14 @@
-import type { ProductType } from "@/api/product-api";
-import alertPopup from "@/components/alert-popup/alert-popup";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import type { ProductType } from "@/api/product-api"
+import alertPopup from "@/components/alert-popup/alert-popup"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   ContextMenuContent,
   ContextMenuGroup,
   ContextMenuItem,
   ContextMenuLabel,
   ContextMenuSeparator,
-} from "@/components/ui/context-menu";
+} from "@/components/ui/context-menu"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,16 +17,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import apiQuery from "@/hooks/use-api-query";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { validateAndStringify } from "@/lib/generic-validation";
-import { useTableRowsSelect } from "@/store/use-table-columns-select-store";
-import { useNavigate } from "@tanstack/react-router";
-import { Menu, XIcon } from "lucide-react";
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { dialogStateZodSchema } from "../private-admin-route";
+} from "@/components/ui/dropdown-menu"
+import apiQuery from "@/hooks/use-api-query"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { validateAndStringify } from "@/lib/generic-validation"
+import { useTableRowsSelect } from "@/store/use-table-columns-select-store"
+import { useNavigate } from "@tanstack/react-router"
+import { Menu, XIcon } from "lucide-react"
+import { useEffect } from "react"
+import { toast } from "sonner"
+import { dialogStateZodSchema } from "../private-admin-route"
 
 // Shared view/update/delete logic used by both the dropdown-menu and
 // context-menu presentations of the row actions. Query-cache invalidation
@@ -34,54 +34,54 @@ import { dialogStateZodSchema } from "../private-admin-route";
 // create/update/delete helpers already invalidate productQueryKey
 // internally, so callers don't need to do anything extra to refresh data.
 const useProductRowActions = (data: ProductType) => {
-  const navigate = useNavigate({ from: "/app/product" });
+  const navigate = useNavigate({ from: "/app/product" })
 
   const onView = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: "Product",
       id: data.id,
       mode: "VIEW",
-    });
-    if (!ds) return;
+    })
+    if (!ds) return
     navigate({
       search: (prev) => ({
         ...prev,
         ds: ds,
       }),
-    });
-  };
+    })
+  }
 
   const onUpdate = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: "Product",
       id: data.id,
       mode: "UPDATE",
-    });
-    if (!ds) return;
+    })
+    if (!ds) return
     navigate({
       search: (prev) => ({
         ...prev,
         ds: ds,
       }),
-    });
-  };
+    })
+  }
 
   const onDelete = async () => {
-    const deleteRes = await alertPopup.delete();
+    const deleteRes = await alertPopup.delete()
     if (deleteRes.response) {
-      const res = await apiQuery.product.delete(data.id);
+      const res = await apiQuery.product.delete(data.id)
       if (res.success) {
-        toast.success(res.message || "Record Deleted");
+        toast.success(res.message || "Record Deleted")
       }
     }
-  };
+  }
 
-  return { onView, onUpdate, onDelete };
-};
+  return { onView, onUpdate, onDelete }
+}
 
 export const TableAction = ({ data }: { data: ProductType }) => {
-  const isMobile = useIsMobile();
-  const { onView, onUpdate, onDelete } = useProductRowActions(data);
+  const isMobile = useIsMobile()
+  const { onView, onUpdate, onDelete } = useProductRowActions(data)
 
   if (isMobile) {
     return (
@@ -96,15 +96,18 @@ export const TableAction = ({ data }: { data: ProductType }) => {
           Delete
         </Button>
       </div>
-    );
+    )
   }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size="icon" variant="outline">
-          <Menu />
-        </Button>}>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button size="icon" variant="outline">
+            <Menu />
+          </Button>
+        }
+      ></DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <DropdownMenuLabel>Action</DropdownMenuLabel>
@@ -117,11 +120,11 @@ export const TableAction = ({ data }: { data: ProductType }) => {
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}
 
 export const TableActionContextMenu = ({ data }: { data: ProductType }) => {
-  const { onView, onUpdate, onDelete } = useProductRowActions(data);
+  const { onView, onUpdate, onDelete } = useProductRowActions(data)
 
   return (
     <ContextMenuContent>
@@ -135,81 +138,76 @@ export const TableActionContextMenu = ({ data }: { data: ProductType }) => {
         </ContextMenuItem>
       </ContextMenuGroup>
     </ContextMenuContent>
-  );
-};
+  )
+}
 
 export const TableRowsSelect = ({
   data,
   type = "row",
 }: {
-  data?: ProductType;
-  type?: "header" | "row";
+  data?: ProductType
+  type?: "header" | "row"
 }) => {
   const { isRowSelect, toggleRowSelect, selectedRows } =
-    useTableRowsSelect("product");
+    useTableRowsSelect("product")
 
-  const checked =
+  const checkedState: boolean | "indeterminate" | undefined =
     type === "header" && selectedRows.length > 0
       ? "indeterminate"
       : data
         ? isRowSelect(data.id)
-        : false;
+        : false
 
-  const onCheckedChange = (checked?:boolean | "indeterminate" ) => {
-    console.log("checked", checked);
+  const indeterminate = checkedState === "indeterminate"
+  const checked = indeterminate ? false : (checkedState as boolean | undefined)
 
+  const onCheckedChange = () => {
     if (type === "row" && data) {
-      toggleRowSelect(data.id);
+      toggleRowSelect(data.id)
     }
-  };
+  }
 
   return (
     <Checkbox
       checked={checked}
+      indeterminate={indeterminate}
       onCheckedChange={onCheckedChange}
       aria-label={type === "header" ? "Select All" : "Select row"}
       className="translate-y-[2px]"
     />
-  );
-};
+  )
+}
 
 export const TableSelectAction = () => {
-  const { selectedRows, clearRowSelect } = useTableRowsSelect("product");
+  const { selectedRows, clearRowSelect } = useTableRowsSelect("product")
 
   useEffect(() => {
     return () => {
-      clearRowSelect();
-    };
+      clearRowSelect()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   const onClearSelection = () => {
-    clearRowSelect();
-  };
+    clearRowSelect()
+  }
 
   const onDelete = async () => {
-    const deleteRes = await alertPopup.delete();
-    if (!deleteRes.response) return;
+    const deleteRes = await alertPopup.delete()
+    if (!deleteRes.response) return
 
-    const results = await Promise.allSettled(
-      selectedRows.map((id) => apiQuery.product.delete(id))
-    );
-    const failedCount = results.filter((r) => r.status === "rejected").length;
-
-    clearRowSelect();
-
-    if (failedCount > 0) {
-      toast.error(
-        `${failedCount} of ${selectedRows.length} record(s) failed to delete`
-      );
-    } else {
-      toast.success("Selected records deleted");
+    try {
+      const res = await apiQuery.product.deleteMany(selectedRows)
+      clearRowSelect()
+      toast.success(res.message || `${res.data.count} record(s) deleted`)
+    } catch {
+      toast.error("Failed to delete selected records")
     }
-  };
+  }
 
-  if (selectedRows.length === 0) return null;
+  if (selectedRows.length === 0) return null
   return (
-    <div className="fixed p-2 gap-2 bg-white shadow-xl drop-shadow-lg rounded-md border flex bottom-8 left-1/2 -translate-x-1/2">
+    <div className="fixed bottom-8 left-1/2 flex -translate-x-1/2 gap-2 rounded-md border bg-muted p-2 text-muted-foreground shadow-xl drop-shadow-lg">
       <div className="flex items-center gap-2 pl-2">
         {selectedRows.length} Selected
         <Button
@@ -230,5 +228,5 @@ export const TableSelectAction = () => {
         Delete
       </Button>
     </div>
-  );
-};
+  )
+}

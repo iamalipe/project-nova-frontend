@@ -83,4 +83,17 @@ export const productQuery = (queryClient: QueryClient) => ({
     queryClient.invalidateQueries({ queryKey: productQueryKey });
     return result;
   },
+
+  // delete many
+  useDeleteMany: () =>
+    useMutation({
+      mutationFn: (ids: string[]) => api.product.deleteMany(ids),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: productQueryKey }),
+    }),
+  deleteMany: async (ids: string[]) => {
+    const result = await api.product.deleteMany(ids);
+    queryClient.invalidateQueries({ queryKey: productQueryKey });
+    return result;
+  },
 });

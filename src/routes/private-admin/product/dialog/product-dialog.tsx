@@ -19,7 +19,9 @@ import { handleFormError } from "@/lib/form";
 import { cn } from "@/lib/utils";
 import type { DialogStateType } from "@/routes/private-admin/private-admin-route";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { faker } from "@faker-js/faker";
 import { useNavigate } from "@tanstack/react-router";
+import { DicesIcon } from "lucide-react";
 import { useForm, type Resolver } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -66,6 +68,15 @@ const DialogMain = ({ data, state }: ProductDialogProps) => {
     defaultValues: defaultValues,
     mode: "onChange",
   });
+
+  const generateFakeData = () => {
+    form.reset({
+      name: faker.commerce.productName(),
+      category: faker.commerce.department(),
+      description: faker.commerce.productDescription(),
+      price: Number(faker.commerce.price({ min: 1, max: 1000, dec: 2 })),
+    });
+  };
 
   const onClose = () => {
     form.reset();
@@ -121,6 +132,19 @@ const DialogMain = ({ data, state }: ProductDialogProps) => {
               Nam porro delectus eos autem reiciendis?
             </DialogDescription>
           </DialogHeader>
+          {state.mode === "CREATE" && (
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={generateFakeData}
+              >
+                <DicesIcon />
+                Fake Data
+              </Button>
+            </div>
+          )}
           <div className="grid gap-2 md:gap-4">
             {/* name */}
             <FormController
