@@ -1,7 +1,10 @@
 services:
-  testing-site:
+  project-nova-frontend:
+    build: ./ # Tells Docker to use the Dockerfile in this exact folder
     container_name: project-nova-frontend
-    build: . # This single dot tells Portainer to use the Dockerfile in this repo
-    restart: always
-    ports:
-      - "3001:80" # Adjust the '80' if your React app uses a different internal port
+    restart: unless-stopped
+    networks:
+      - app-network
+networks:
+  app-network:
+    external: true
