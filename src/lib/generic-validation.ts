@@ -96,6 +96,23 @@ export const redirectSearchSchema = z.object({
 });
 export type RedirectSearchSchemaType = z.infer<typeof redirectSearchSchema>;
 
+// Used by the `/oauth/consent` route's `validateSearch`. These are the PKCE
+// authorization-request params the backend's `/oauth/authorize` redirects
+// here with unchanged — already validated server-side, so this only checks
+// shape for the frontend's own type-safety.
+export const oauthConsentSearchSchema = z.object({
+  response_type: z.literal("code"),
+  client_id: z.string().min(1),
+  redirect_uri: z.string().min(1),
+  code_challenge: z.string().min(1),
+  code_challenge_method: z.literal("S256"),
+  state: z.string().min(1),
+  scope: z.literal("openid").optional(),
+});
+export type OAuthConsentSearchSchemaType = z.infer<
+  typeof oauthConsentSearchSchema
+>;
+
 export type FilteredLoaderDeps<T extends z.ZodObject<z.ZodRawShape>> = {
   [K in keyof z.infer<T>]: z.infer<T>[K];
 };

@@ -18,11 +18,13 @@ export const queryClient = new QueryClient({
 // Import query modules after exporting queryClient
 import { authQuery } from "./api-query/auth-query"
 import { generalQuery } from "./api-query/general-query"
+import { oauthQuery } from "./api-query/oauth-query"
 import { productQuery } from "./api-query/product-query"
 
 const apiQuery = {
   auth: authQuery(queryClient),
   general: generalQuery(queryClient),
+  oauth: oauthQuery(queryClient),
   product: productQuery(queryClient),
 }
 
