@@ -18,8 +18,10 @@ export const authQuery = (queryClient: QueryClient) => ({
 
   logoutUser: async () => {
     const result = await api.auth.logout();
-    queryClient.invalidateQueries({ queryKey: currentUserQueryKey });
-    queryClient.invalidateQueries();
+    // Drop all cached data instead of invalidating it: invalidating would
+    // trigger refetches for every mounted query right as we log out, and
+    // those would just fail auth before the redirect happens.
+    queryClient.clear();
     return result;
   },
 });

@@ -1,5 +1,5 @@
 // auth-api.ts
-import type { ApiNormalResponse } from "@/types/generic-type";
+import { normalizeApiError, unwrapApiError } from "./api-utils";
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
 
 export type LoginPayload = {
@@ -35,44 +35,29 @@ export type CurrentUserReturn = {
 };
 
 export const authAPI = (axiosInstance: AxiosInstance) => ({
-  login: async (
-    data: LoginPayload,
-    config?: AxiosRequestConfig
-  ): Promise<LoginReturn> => {
-    try {
+  login: (data: LoginPayload, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
       const response = await axiosInstance.post<LoginReturn>(
         "/auth/login",
         data,
         config
       );
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw error.response.data as ApiNormalResponse;
-      }
-      throw error;
-    }
-  },
+    }),
 
-  register: async (
-    data: RegisterPayload,
-    config?: AxiosRequestConfig
-  ): Promise<RegisterReturn> => {
-    try {
+  register: (data: RegisterPayload, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
       const response = await axiosInstance.post<RegisterReturn>(
         "/auth/register",
         data,
         config
       );
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw error.response.data as ApiNormalResponse;
-      }
-      throw error;
-    }
-  },
+    }),
 
+  // A 401 here just means "not logged in", so it resolves to null instead of
+  // throwing. Any other failure (5xx, network error) is a real problem and
+  // is rethrown so callers don't mistake an outage for a logged-out state.
   me: async (
     config?: AxiosRequestConfig
   ): Promise<CurrentUserReturn | null> => {
@@ -82,16 +67,23 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
         config
       );
       return response.data;
-    } catch {
-      return null;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        return null;
+      }
+      normalizeApiError(error);
     }
   },
+
   logout: async (config?: AxiosRequestConfig): Promise<null> => {
     try {
       const response = await axiosInstance.get<null>(`/auth/logout`, config);
       return response.data;
-    } catch {
-      return null;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        return null;
+      }
+      normalizeApiError(error);
     }
-  }
+  },
 });

@@ -2,10 +2,10 @@
 import { qString } from "@/lib/utils";
 import type { ApiNormalResponse, TableConfigType } from "@/types/generic-type";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
-import axios from "axios";
+import { unwrapApiError } from "./api-utils";
 
 export type ProductType = {
-  _id: string;
+  id: string;
   name: string;
   description: string;
   category: string;
@@ -40,97 +40,55 @@ export type ApiProductGetAllParams = {
 };
 
 export const productAPI = (axiosInstance: AxiosInstance) => ({
-  getAll: async (
-    params?: ApiProductGetAllParams,
-    config?: AxiosRequestConfig,
-  ): Promise<ApiProductGetAll> => {
-    try {
+  getAll: (params?: ApiProductGetAllParams, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
       const stringifiedParams = params ? qString(params) : "";
       const response = await axiosInstance.get<ApiProductGetAll>(
-        `/product?${stringifiedParams}`,
+        stringifiedParams ? `/product?${stringifiedParams}` : "/product",
         config,
       );
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw error.response.data as ApiNormalResponse;
-      }
-      throw error;
-    }
-  },
+    }),
 
-  get: async (
-    id: string,
-    config?: AxiosRequestConfig,
-  ): Promise<ApiProductGet> => {
-    try {
+  get: (id: string, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
       const response = await axiosInstance.get<ApiProductGet>(
         `/product/${id}`,
         config,
       );
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw error.response.data as ApiNormalResponse;
-      }
-      throw error;
-    }
-  },
+    }),
 
-  create: async (
-    data: ApiProductCreate,
-    config?: AxiosRequestConfig,
-  ): Promise<ApiProductGet> => {
-    try {
+  create: (data: ApiProductCreate, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
       const response = await axiosInstance.post<ApiProductGet>(
         "/product",
         data,
         config,
       );
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw error.response.data as ApiNormalResponse;
-      }
-      throw error;
-    }
-  },
+    }),
 
-  update: async (
+  update: (
     id: string,
     data: ApiProductUpdate,
     config?: AxiosRequestConfig,
-  ): Promise<ApiProductGet> => {
-    try {
+  ) =>
+    unwrapApiError(async () => {
       const response = await axiosInstance.put<ApiProductGet>(
         `/product/${id}`,
         data,
         config,
       );
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw error.response.data as ApiNormalResponse;
-      }
-      throw error;
-    }
-  },
+    }),
 
-  delete: async (
-    id: string,
-    config?: AxiosRequestConfig,
-  ): Promise<ApiNormalResponse> => {
-    try {
+  delete: (id: string, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
       const response = await axiosInstance.delete<ApiNormalResponse>(
         `/product/${id}`,
         config,
       );
       return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw error.response.data as ApiNormalResponse;
-      }
-      throw error;
-    }
-  },
+    }),
 });
