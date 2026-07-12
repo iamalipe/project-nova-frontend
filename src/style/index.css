@@ -131,3 +131,57 @@
     @apply font-sans;
     }
 }
+
+/* =========================================
+   CUSTOM TAILWIND V4 UTILITIES
+   ========================================= */
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility h-full-x {
+  height: 100%;
+  height: 100vh;
+  height: 100dvh;
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) var(--muted);
+}
+
+@utility table-header-box-shadow {
+  box-shadow: inset 0px -1px 0px var(--border);
+}
+
+@utility border-debug {
+  border: 1px solid red;
+  animation: border-debug-animation 3s linear infinite;
+}
+
+@utility border-debug-1 {
+  border: 1px solid red;
+  animation: border-debug-animation 3s linear infinite;
+}
+
+@utility border-debug-2 {
+  border: 2px solid red;
+  animation: border-debug-animation 3s linear infinite;
+}
+
+@utility border-debug-3 {
+  border: 3px solid red;
+  animation: border-debug-animation 3s linear infinite;
+}
+
+/* Keyframes can sit right here at the root level */
+@keyframes border-debug-animation {
+  0% { border-color: red; }
+  50% { border-color: green; }
+  100% { border-color: blue; }
+}
