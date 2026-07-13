@@ -1,4 +1,4 @@
-import type { ProductType } from "@/api/product-api"
+import type { UserType } from "@/api/user-api"
 import alertPopup from "@/components/alert-popup/alert-popup"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -28,34 +28,18 @@ import { useEffect } from "react"
 import { toast } from "sonner"
 import { dialogStateZodSchema } from "../private-admin-route"
 
-// Shared view/update/delete logic used by both the dropdown-menu and
-// context-menu presentations of the row actions. Query-cache invalidation
-// (not router.invalidate()) is the app-wide strategy: apiQuery.product's
-// create/update/delete helpers already invalidate productQueryKey
-// internally, so callers don't need to do anything extra to refresh data.
-const useProductRowActions = (data: ProductType) => {
-  const navigate = useNavigate({ from: "/app/product" })
+const useUserRowActions = (data: UserType) => {
+  const navigate = useNavigate({ from: "/app/user" })
+  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser();
+  const currentUser = currentUserRes?.data;
+  const isSuperuser = currentUser?.role === "superuser";
+  const isSelf = currentUser?.id === data.id;
 
   const onView = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
-      dialog: "Product",
+      dialog: "User",
       id: data.id,
       mode: "VIEW",
-    })
-    if (!ds) return
-    navigate({
-      search: (prev) => ({
-        ...prev,
-        ds: ds,
-      }),
-    })
-  }
-
-  const onUpdate = async () => {
-    const ds = validateAndStringify(dialogStateZodSchema, {
-      dialog: "Product",
-      id: data.id,
-      mode: "UPDATE",
     })
     if (!ds) return
     navigate({
@@ -69,21 +53,25 @@ const useProductRowActions = (data: ProductType) => {
   const onDelete = async () => {
     const deleteRes = await alertPopup.delete()
     if (deleteRes.response) {
-      const res = await apiQuery.product.delete(data.id)
-      if (res.success) {
-        toast.success(res.message || "Record Deleted")
+      try {
+        const res = await apiQuery.user.delete(data.id)
+        if (res.success) {
+          toast.success(res.message || "Record Deleted")
+        }
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || "Failed to delete user")
       }
     }
   }
 
-  return { onView, onUpdate, onDelete }
+  return { onView, onDelete, isSuperuser, isSelf }
 }
 
-export const TableAction = ({ data }: { data: ProductType }) => {
+export const TableAction = ({ data }: { data: UserType }) => {
   const isMobile = useIsMobile()
-  const { onView, onUpdate, onDelete } = useProductRowActions(data)
-  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
-  const isSuperuser = currentUserRes?.data?.role === "superuser"
+  const { onView, onDelete, isSuperuser, isSelf } = useUserRowActions(data)
+
+  const showDelete = isSuperuser && !isSelf;
 
   if (isMobile) {
     return (
@@ -91,15 +79,10 @@ export const TableAction = ({ data }: { data: ProductType }) => {
         <Button onClick={onView} size="sm" variant="outline">
           View
         </Button>
-        {isSuperuser && (
-          <>
-            <Button onClick={onUpdate} size="sm" variant="outline">
-              Update
-            </Button>
-            <Button onClick={onDelete} size="sm" variant="destructive">
-              Delete
-            </Button>
-          </>
+        {showDelete && (
+          <Button onClick={onDelete} size="sm" variant="destructive">
+            Delete
+          </Button>
         )}
       </div>
     )
@@ -119,13 +102,10 @@ export const TableAction = ({ data }: { data: ProductType }) => {
           <DropdownMenuLabel>Action</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
-          {isSuperuser && (
-            <>
-              <DropdownMenuItem onClick={onUpdate}>Update</DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive" onClick={onDelete}>
-                Delete
-              </DropdownMenuItem>
-            </>
+          {showDelete && (
+            <DropdownMenuItem className="text-destructive" onClick={onDelete}>
+              Delete
+            </DropdownMenuItem>
           )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -133,10 +113,10 @@ export const TableAction = ({ data }: { data: ProductType }) => {
   )
 }
 
-export const TableActionContextMenu = ({ data }: { data: ProductType }) => {
-  const { onView, onUpdate, onDelete } = useProductRowActions(data)
-  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
-  const isSuperuser = currentUserRes?.data?.role === "superuser"
+export const TableActionContextMenu = ({ data }: { data: UserType }) => {
+  const { onView, onDelete, isSuperuser, isSelf } = useUserRowActions(data)
+
+  const showDelete = isSuperuser && !isSelf;
 
   return (
     <ContextMenuContent>
@@ -144,13 +124,10 @@ export const TableActionContextMenu = ({ data }: { data: ProductType }) => {
         <ContextMenuLabel>Action</ContextMenuLabel>
         <ContextMenuSeparator />
         <ContextMenuItem onClick={onView}>View</ContextMenuItem>
-        {isSuperuser && (
-          <>
-            <ContextMenuItem onClick={onUpdate}>Update</ContextMenuItem>
-            <ContextMenuItem className="text-destructive" onClick={onDelete}>
-              Delete
-            </ContextMenuItem>
-          </>
+        {showDelete && (
+          <ContextMenuItem className="text-destructive" onClick={onDelete}>
+            Delete
+          </ContextMenuItem>
         )}
       </ContextMenuGroup>
     </ContextMenuContent>
@@ -161,13 +138,19 @@ export const TableRowsSelect = ({
   data,
   type = "row",
 }: {
-  data?: ProductType
+  data?: UserType
   type?: "header" | "row"
 }) => {
   const { isRowSelect, toggleRowSelect, selectedRows } =
-    useTableRowsSelect("product")
-  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
-  const isSuperuser = currentUserRes?.data?.role === "superuser"
+    useTableRowsSelect("user")
+
+  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser();
+  const currentUser = currentUserRes?.data;
+  const isSuperuser = currentUser?.role === "superuser";
+  
+  // Can't select self for deletion
+  const isSelf = data ? currentUser?.id === data.id : false;
+  const disabled = data ? isSelf || !isSuperuser : !isSuperuser;
 
   const checkedState: boolean | "indeterminate" | undefined =
     type === "header" && selectedRows.length > 0
@@ -180,12 +163,12 @@ export const TableRowsSelect = ({
   const checked = indeterminate ? false : (checkedState as boolean | undefined)
 
   const onCheckedChange = () => {
-    if (type === "row" && data && isSuperuser) {
+    if (type === "row" && data && !disabled) {
       toggleRowSelect(data.id)
     }
   }
 
-  if (!isSuperuser && type === "row") {
+  if (disabled && type === "row") {
     return <Checkbox checked={false} disabled aria-label="Select row disabled" className="translate-y-[2px]" />
   }
 
@@ -196,13 +179,12 @@ export const TableRowsSelect = ({
       onCheckedChange={onCheckedChange}
       aria-label={type === "header" ? "Select All" : "Select row"}
       className="translate-y-[2px]"
-      disabled={!isSuperuser}
     />
   )
 }
 
 export const TableSelectAction = () => {
-  const { selectedRows, clearRowSelect } = useTableRowsSelect("product")
+  const { selectedRows, clearRowSelect } = useTableRowsSelect("user")
 
   useEffect(() => {
     return () => {
@@ -220,7 +202,7 @@ export const TableSelectAction = () => {
     if (!deleteRes.response) return
 
     try {
-      const res = await apiQuery.product.deleteMany(selectedRows)
+      const res = await apiQuery.user.deleteMany(selectedRows)
       clearRowSelect()
       toast.success(res.message || `${res.data.count} record(s) deleted`)
     } catch {

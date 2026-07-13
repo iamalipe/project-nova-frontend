@@ -8,6 +8,7 @@ import { useMemo } from "react";
 
 import ProductDialogAll from "@/routes/private-admin/product/dialog-all/product-dialog-all";
 import ProductDialog from "@/routes/private-admin/product/dialog/product-dialog";
+import UserDialog from "@/routes/private-admin/user/dialog/user-dialog";
 
 type DialogName = NonNullable<DialogStateType["dialog"]>;
 
@@ -27,6 +28,12 @@ const dialogRegistry: Record<
     }
     if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
       return <ProductDialogAll state={state} />;
+    }
+    return null;
+  },
+  User: ({ state }) => {
+    if (state.mode && ["VIEW"].includes(state.mode)) {
+      return <UserDialog state={state} />;
     }
     return null;
   },

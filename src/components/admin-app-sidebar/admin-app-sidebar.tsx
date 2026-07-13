@@ -10,7 +10,7 @@ import {
   SidebarMenu,
 } from "@/components/ui/sidebar"
 import { useLocation } from "@tanstack/react-router"
-import { Home, Package } from "lucide-react"
+import { Home, Package, Users } from "lucide-react"
 import { NavUser } from "./nav-user"
 
 const pageMenus: AdminAppSidebarMenuItemProps[] = [
@@ -23,6 +23,11 @@ const pageMenus: AdminAppSidebarMenuItemProps[] = [
     title: "Product",
     url: "/app/product",
     icon: <Package />,
+  },
+  {
+    title: "User",
+    url: "/app/user",
+    icon: <Users />,
   },
 ]
 

@@ -1,6 +1,7 @@
-import { QueryClient, queryOptions, useQuery } from "@tanstack/react-query";
+import { QueryClient, queryOptions, useQuery, useMutation } from "@tanstack/react-query";
 
 import api from "@/api/api";
+import { type CurrentUser, type ChangePasswordPayload } from "@/api/auth-api";
 
 export const currentUserQueryKey = ["current-user"];
 const getCurrentUserOptions = () =>
@@ -24,4 +25,45 @@ export const authQuery = (queryClient: QueryClient) => ({
     queryClient.clear();
     return result;
   },
+
+  useUpdateProfile: () =>
+    useMutation({
+      mutationFn: (data: Partial<CurrentUser>) => api.auth.updateProfile(data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: currentUserQueryKey });
+      },
+    }),
+
+  useUpdateProfileImage: () =>
+    useMutation({
+      mutationFn: (formData: FormData) => api.auth.updateProfileImage(formData),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: currentUserQueryKey });
+      },
+    }),
+
+  updateProfile: async (data: Partial<CurrentUser>) => {
+    const result = await api.auth.updateProfile(data);
+    queryClient.invalidateQueries({ queryKey: currentUserQueryKey });
+    return result;
+  },
+
+  useChangePassword: () =>
+    useMutation({
+      mutationFn: (data: ChangePasswordPayload) => api.auth.changePassword(data),
+    }),
+
+  useGetSessions: () =>
+    useQuery({
+      queryKey: ["user-sessions"],
+      queryFn: () => api.auth.getSessions(),
+    }),
+
+  useDeleteSession: () =>
+    useMutation({
+      mutationFn: (id: string) => api.auth.deleteSession(id),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["user-sessions"] });
+      },
+    }),
 });

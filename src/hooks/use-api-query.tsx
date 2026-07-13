@@ -20,12 +20,14 @@ import { authQuery } from "./api-query/auth-query"
 import { generalQuery } from "./api-query/general-query"
 import { oauthQuery } from "./api-query/oauth-query"
 import { productQuery } from "./api-query/product-query"
+import { userQuery } from "./api-query/user-query"
 
 const apiQuery = {
   auth: authQuery(queryClient),
   general: generalQuery(queryClient),
   oauth: oauthQuery(queryClient),
   product: productQuery(queryClient),
+  user: userQuery(queryClient),
 }
 
 export type ApiQuery = typeof apiQuery

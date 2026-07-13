@@ -20,6 +20,25 @@ export type RegisterReturn = {
   success: boolean;
 };
 
+export type ChangePasswordPayload = {
+  oldPassword: string;
+  newPassword: string;
+};
+
+export type UserSession = {
+  id: string;
+  ip?: string | null;
+  userAgent?: string | null;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SessionsReturn = {
+  success: boolean;
+  data: UserSession[];
+};
+
 export type CurrentUser = {
   id: string;
   email: string;
@@ -28,6 +47,7 @@ export type CurrentUser = {
   firstName: string;
   lastName?: string;
   profileImage?: string;
+  role: "guest" | "superuser";
 };
 export type CurrentUserReturn = {
   success: boolean;
@@ -87,4 +107,58 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
       normalizeApiError(error);
     }
   },
+
+  updateProfile: (data: Partial<CurrentUser>, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.put<CurrentUserReturn>(
+        "/auth/profile",
+        data,
+        config
+      );
+      return response.data;
+    }),
+
+  updateProfileImage: (formData: FormData, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.put<CurrentUserReturn>(
+        "/auth/profile-image",
+        formData,
+        {
+          ...config,
+          headers: {
+            ...config?.headers,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    }),
+
+  changePassword: (data: ChangePasswordPayload, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.post<{ success: boolean }>(
+        "/auth/change-password",
+        data,
+        config
+      );
+      return response.data;
+    }),
+
+  getSessions: (config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.get<SessionsReturn>(
+        "/auth/sessions",
+        config
+      );
+      return response.data.data;
+    }),
+
+  deleteSession: (id: string, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.delete<{ success: boolean }>(
+        `/auth/sessions/${id}`,
+        config
+      );
+      return response.data;
+    }),
 });

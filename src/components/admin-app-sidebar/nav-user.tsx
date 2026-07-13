@@ -94,15 +94,15 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem render={<Link to="/app/profile" />}>
+              <DropdownMenuItem render={<Link to="/app/settings/profile" />}>
                 <UserCircleIcon />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem render={<Link to="/app/settings/billing" />}>
                 <CreditCardIcon />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem render={<Link to="/app/settings/notifications" />}>
                 <BellIcon />
                 Notifications
               </DropdownMenuItem>

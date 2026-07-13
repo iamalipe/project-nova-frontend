@@ -5,6 +5,7 @@ import axios from "axios";
 import { authAPI } from "./auth-api";
 import { oauthAPI } from "./oauth-api";
 import { productAPI } from "./product-api";
+import { userAPI } from "./user-api";
 
 // Axios instance configuration
 export const axiosInstance = axios.create({
@@ -23,6 +24,7 @@ export const oauthAxiosInstance = axios.create({
 const api = {
   auth: authAPI(axiosInstance),
   product: productAPI(axiosInstance),
+  user: userAPI(axiosInstance),
   oauth: oauthAPI(oauthAxiosInstance),
 };
 

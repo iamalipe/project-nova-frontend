@@ -11,6 +11,7 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { dialogStateZodSchema } from "../private-admin-route";
+import apiQuery from "@/hooks/use-api-query";
 
 const PRODUCT_ROUTE_FROM = "/app/product";
 const PRODUCT_DIALOG = "Product";
@@ -29,6 +30,9 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
   const searchParam = useSearch({
     from: PRODUCT_ROUTE_FROM,
   });
+
+  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser();
+  const isSuperuser = currentUserRes?.data?.role === "superuser";
 
   const onRefresh = async () => {
     await rawQuery.refetch();
@@ -91,15 +95,17 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
         <Button title="All Products" variant="outline" onClick={onAllProducts}>
           All Products
         </Button>
-        <Button
-          title="Create New"
-          size="icon"
-          variant="outline"
-          data-testid="create-new-button"
-          onClick={onCreate}
-        >
-          <Plus />
-        </Button>
+        {isSuperuser && (
+          <Button
+            title="Create New"
+            size="icon"
+            variant="outline"
+            data-testid="create-new-button"
+            onClick={onCreate}
+          >
+            <Plus />
+          </Button>
+        )}
         <AsyncRefreshButton
           title="Refresh"
           variant="outline"
