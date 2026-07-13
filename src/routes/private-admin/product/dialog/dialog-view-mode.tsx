@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -7,14 +7,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { validateAndStringify } from "@/lib/generic-validation";
-import { useNavigate } from "@tanstack/react-router";
-import { dialogStateZodSchema } from "../../private-admin-route";
-import type { ProductDialogProps } from "./product-dialog";
+} from "@/components/ui/dialog"
+import { validateAndStringify } from "@/lib/generic-validation"
+import { useNavigate } from "@tanstack/react-router"
+import { dialogStateZodSchema } from "../../private-admin-route"
+import type { ProductDialogProps } from "./product-dialog"
 
 const DialogViewMode = ({ data }: ProductDialogProps) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const onClose = () => {
     navigate({
       to: "/app/product",
@@ -22,37 +22,37 @@ const DialogViewMode = ({ data }: ProductDialogProps) => {
         ...prev,
         ds: undefined,
       }),
-    });
-  };
+    })
+  }
 
   const onEdit = () => {
-    if (!data) return;
+    if (!data) return
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: "Product",
       id: data.id,
       mode: "UPDATE",
-    });
+    })
 
-    if (!ds) return;
+    if (!ds) return
     navigate({
       to: "/app/product",
       search: (prev) => ({
         ...prev,
         ds: ds,
       }),
-    });
-  };
+    })
+  }
 
   return (
     <>
       <Dialog
         open={true}
         onOpenChange={(open) => {
-          if (!open) onClose();
+          if (!open) onClose()
         }}
       >
         <DialogContent
-          className="md:max-w-[600px] px-2 md:px-6 sm:px-4 flex flex-col sm:max-h-[90vh] overflow-hidden"
+          className="flex flex-col overflow-hidden sm:max-h-[90vh] md:max-w-[600px]"
           aria-live="polite"
           aria-busy="true"
         >
@@ -65,7 +65,7 @@ const DialogViewMode = ({ data }: ProductDialogProps) => {
               Nam porro delectus eos autem reiciendis?
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col overflow-auto flex-1 px-2">
+          <div className="flex flex-1 flex-col overflow-auto px-2">
             {data?.name && (
               <ViewField label="Name">
                 <span>{data.name}</span>
@@ -96,36 +96,36 @@ const DialogViewMode = ({ data }: ProductDialogProps) => {
         </DialogContent>
       </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default DialogViewMode;
+export default DialogViewMode
 
 type ViewFieldProps = {
-  label: string;
-  children?: React.ReactNode;
-  block?: boolean;
-};
+  label: string
+  children?: React.ReactNode
+  block?: boolean
+}
 const ViewField = ({ label, children, block = false }: ViewFieldProps) => {
   if (block) {
     return (
       <div className="px-1 py-2">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
-        <div className="text-sm text-muted-foreground mt-2 px-3 py-2 bg-muted rounded-md border text-left">
+        <div className="mt-2 rounded-md border bg-muted px-3 py-2 text-left text-sm text-muted-foreground">
           <p className="whitespace-pre-wrap">{children}</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="flex justify-between items-center border-b px-1 py-2 last:border-b-0">
-      <p className="text-sm font-medium truncate text-muted-foreground">
+    <div className="flex items-center justify-between border-b px-1 py-2 last:border-b-0">
+      <p className="truncate text-sm font-medium text-muted-foreground">
         {label}
       </p>
-      <div className="text-sm font-bold text-foreground text-right flex items-center justify-end gap-2 flex-shrink-0">
+      <div className="flex flex-shrink-0 items-center justify-end gap-2 text-right text-sm font-bold text-foreground">
         {children}
       </div>
     </div>
-  );
-};
+  )
+}

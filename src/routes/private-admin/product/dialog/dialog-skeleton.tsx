@@ -1,19 +1,19 @@
-import FormSkeleton from "@/components/form/form-skeleton";
+import FormSkeleton from "@/components/form/form-skeleton"
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/components/ui/dialog"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const DialogSkeleton = () => {
   return (
     <>
       <Dialog open={true}>
         <DialogContent
-          className="sm:max-w-[600px] sm:max-h-[80vh] px-2 md:px-4 sm:px-6"
+          className="sm:max-h-[80vh] sm:max-w-[600px]"
           aria-live="polite"
           aria-busy="true"
         >
@@ -40,7 +40,7 @@ const DialogSkeleton = () => {
         </DialogContent>
       </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default DialogSkeleton;
+export default DialogSkeleton
