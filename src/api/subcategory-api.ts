@@ -111,4 +111,19 @@ export const subcategoryAPI = (axiosInstance: AxiosInstance) => ({
       );
       return response.data;
     }),
+
+  createMany: (data: ApiSubcategoryCreate[], config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.post<ApiSubcategoryCreateMany>(
+        "/subcategory/many",
+        data,
+        config,
+      );
+      return response.data;
+    }),
 });
+
+export type ApiSubcategoryCreateMany = ApiNormalResponse & {
+  data: { success: SubcategoryType[]; failed: any[] };
+  info: { success: number; failed: number };
+};

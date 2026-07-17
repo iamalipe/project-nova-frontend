@@ -6,7 +6,7 @@ import { createRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 
 export const dialogStateZodSchema = z.object({
-  mode: z.enum(["CREATE", "UPDATE", "VIEW", "VIEW-ALL"]).optional(),
+  mode: z.enum(["CREATE", "UPDATE", "VIEW", "VIEW-ALL", "IMPORT"]).optional(),
   dialog: z.enum(["Product", "User", "Category", "Subcategory"]).optional(),
   id: z.uuid().optional(),
 });

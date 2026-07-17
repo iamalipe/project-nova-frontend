@@ -6,13 +6,16 @@ import {
 import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
 
-import ProductDialogAll from "@/routes/private-admin/product/dialog-all/product-dialog-all";
-import ProductDialog from "@/routes/private-admin/product/dialog/product-dialog";
-import UserDialog from "@/routes/private-admin/user/dialog/user-dialog";
 import CategoryDialog from "@/routes/private-admin/category/dialog/category-dialog";
 import CategoryDialogAll from "@/routes/private-admin/category/dialog-all/category-dialog-all";
+import CategoryImportDialog from "@/routes/private-admin/category/dialog-import/category-import-dialog";
 import SubcategoryDialog from "@/routes/private-admin/subcategory/dialog/subcategory-dialog";
 import SubcategoryDialogAll from "@/routes/private-admin/subcategory/dialog-all/subcategory-dialog-all";
+import SubcategoryImportDialog from "@/routes/private-admin/subcategory/dialog-import/subcategory-import-dialog";
+import ProductDialogAll from "@/routes/private-admin/product/dialog-all/product-dialog-all";
+import ProductDialog from "@/routes/private-admin/product/dialog/product-dialog";
+import ProductImportDialog from "@/routes/private-admin/product/dialog-import/product-import-dialog";
+import UserDialog from "@/routes/private-admin/user/dialog/user-dialog";
 
 type DialogName = NonNullable<DialogStateType["dialog"]>;
 
@@ -33,6 +36,9 @@ const dialogRegistry: Record<
     if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
       return <ProductDialogAll state={state} />;
     }
+    if (state.mode && ["IMPORT"].includes(state.mode)) {
+      return <ProductImportDialog state={state} />;
+    }
     return null;
   },
   User: ({ state }) => {
@@ -48,6 +54,9 @@ const dialogRegistry: Record<
     if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
       return <CategoryDialogAll state={state} />;
     }
+    if (state.mode && ["IMPORT"].includes(state.mode)) {
+      return <CategoryImportDialog state={state} />;
+    }
     return null;
   },
   Subcategory: ({ state }) => {
@@ -56,6 +65,9 @@ const dialogRegistry: Record<
     }
     if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
       return <SubcategoryDialogAll state={state} />;
+    }
+    if (state.mode && ["IMPORT"].includes(state.mode)) {
+      return <SubcategoryImportDialog state={state} />;
     }
     return null;
   },

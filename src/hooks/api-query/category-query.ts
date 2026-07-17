@@ -54,6 +54,19 @@ export const categoryQuery = (queryClient: QueryClient) => ({
     return result;
   },
 
+  // create many
+  useCreateMany: () =>
+    useMutation({
+      mutationFn: (data: ApiCategoryCreate[]) => api.category.createMany(data),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: categoryQueryKey }),
+    }),
+  createMany: async (data: ApiCategoryCreate[]) => {
+    const result = await api.category.createMany(data);
+    queryClient.invalidateQueries({ queryKey: categoryQueryKey });
+    return result;
+  },
+
   // update
   useUpdate: () =>
     useMutation({

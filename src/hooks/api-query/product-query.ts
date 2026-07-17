@@ -54,6 +54,19 @@ export const productQuery = (queryClient: QueryClient) => ({
     return result;
   },
 
+  // create many
+  useCreateMany: () =>
+    useMutation({
+      mutationFn: (data: ApiProductCreate[]) => api.product.createMany(data),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: productQueryKey }),
+    }),
+  createMany: async (data: ApiProductCreate[]) => {
+    const result = await api.product.createMany(data);
+    queryClient.invalidateQueries({ queryKey: productQueryKey });
+    return result;
+  },
+
   // update
   useUpdate: () =>
     useMutation({

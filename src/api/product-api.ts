@@ -121,4 +121,19 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
       );
       return response.data;
     }),
+
+  createMany: (data: ApiProductCreate[], config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.post<ApiProductCreateMany>(
+        "/product/many",
+        data,
+        config,
+      );
+      return response.data;
+    }),
 });
+
+export type ApiProductCreateMany = ApiNormalResponse & {
+  data: { success: ProductType[]; failed: any[] };
+  info: { success: number; failed: number };
+};

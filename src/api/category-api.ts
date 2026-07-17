@@ -103,4 +103,19 @@ export const categoryAPI = (axiosInstance: AxiosInstance) => ({
       );
       return response.data;
     }),
+
+  createMany: (data: ApiCategoryCreate[], config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.post<ApiCategoryCreateMany>(
+        "/category/many",
+        data,
+        config,
+      );
+      return response.data;
+    }),
 });
+
+export type ApiCategoryCreateMany = ApiNormalResponse & {
+  data: { success: CategoryType[]; failed: any[] };
+  info: { success: number; failed: number };
+};

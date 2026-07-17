@@ -54,6 +54,19 @@ export const subcategoryQuery = (queryClient: QueryClient) => ({
     return result;
   },
 
+  // create many
+  useCreateMany: () =>
+    useMutation({
+      mutationFn: (data: ApiSubcategoryCreate[]) => api.subcategory.createMany(data),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: subcategoryQueryKey }),
+    }),
+  createMany: async (data: ApiSubcategoryCreate[]) => {
+    const result = await api.subcategory.createMany(data);
+    queryClient.invalidateQueries({ queryKey: subcategoryQueryKey });
+    return result;
+  },
+
   // update
   useUpdate: () =>
     useMutation({
