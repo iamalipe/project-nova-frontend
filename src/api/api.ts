@@ -3,6 +3,8 @@ import axios from "axios";
 
 // import all api
 import { authAPI } from "./auth-api";
+import { categoryAPI } from "./category-api";
+import { subcategoryAPI } from "./subcategory-api";
 import { oauthAPI } from "./oauth-api";
 import { productAPI } from "./product-api";
 import { userAPI } from "./user-api";
@@ -23,6 +25,8 @@ export const oauthAxiosInstance = axios.create({
 // Export all APIs
 const api = {
   auth: authAPI(axiosInstance),
+  category: categoryAPI(axiosInstance),
+  subcategory: subcategoryAPI(axiosInstance),
   product: productAPI(axiosInstance),
   user: userAPI(axiosInstance),
   oauth: oauthAPI(oauthAxiosInstance),

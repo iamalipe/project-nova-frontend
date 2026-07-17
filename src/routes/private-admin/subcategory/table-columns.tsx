@@ -1,9 +1,9 @@
-import type { ProductType } from "@/api/product-api";
+import type { SubcategoryType } from "@/api/subcategory-api";
 import type { DataTableColumn } from "@/hooks/use-data-table";
 import { formatDate } from "@/lib/date-time";
 import { TableAction, TableRowsSelect } from "./table-action";
 
-const tableColumns: DataTableColumn<ProductType>[] = [
+const tableColumns: DataTableColumn<SubcategoryType>[] = [
   {
     key: "select",
     label: "Select",
@@ -22,35 +22,17 @@ const tableColumns: DataTableColumn<ProductType>[] = [
     classNameRow: "font-bold",
   },
   {
+    label: "Category",
+    key: "category",
+    render: (record) => record.category?.name || "-",
+    isSortable: true,
+  },
+  {
     label: "SKU",
     key: "sku",
     render: (record) => record.sku,
     isSortable: true,
     classNameRow: "font-mono font-bold text-primary",
-  },
-  {
-    label: "Category",
-    key: "subcategoryId",
-    render: (record) => record.subcategory?.category?.name || "-",
-    isSortable: false,
-  },
-  {
-    label: "Subcategory",
-    key: "subcategory",
-    render: (record) => record.subcategory?.name || "-",
-    isSortable: false,
-  },
-  {
-    label: "MRP",
-    key: "mrp",
-    render: (record) => `$${record.mrp}`,
-    isSortable: true,
-  },
-  {
-    label: "MOP",
-    key: "mop",
-    render: (record) => `$${record.mop}`,
-    isSortable: true,
   },
   {
     label: "Description",

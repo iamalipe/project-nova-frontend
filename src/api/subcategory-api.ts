@@ -3,68 +3,58 @@ import type { ApiNormalResponse, TableConfigType } from "@/types/generic-type";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import { unwrapApiError } from "./api-utils";
 
-export type ProductType = {
+export type SubcategoryType = {
   id: string;
   name: string;
-  description: string | null;
-  subcategoryId: string;
+  categoryId: string;
   sku: string;
-  mrp: number;
-  mop: number;
+  description: string | null;
   images: string | null;
-  userId: string;
   createdAt: string;
   updatedAt: string;
-  subcategory?: {
+  category?: {
     id: string;
     name: string;
     sku: string;
-    categoryId: string;
-    category?: {
-      id: string;
-      name: string;
-      sku: string;
-    };
   };
 };
 
-export type ApiProductCreate = {
+export type ApiSubcategoryCreate = {
   name: string;
-  description?: string;
-  subcategoryId: string;
-  mrp: number;
-  mop: number;
-  images?: string;
+  categoryId: string;
+  description?: string | null;
+  images?: string | null;
 };
 
-export type ApiProductUpdate = Partial<ApiProductCreate>;
+export type ApiSubcategoryUpdate = Partial<ApiSubcategoryCreate>;
 
-export type ApiProductGetAll = ApiNormalResponse & {
-  data: ProductType[];
+export type ApiSubcategoryGetAll = ApiNormalResponse & {
+  data: SubcategoryType[];
   pagination: { total: number; page: number; limit: number };
   sort: { orderBy: string; order: "asc" | "desc" };
   config?: TableConfigType;
 };
-export type ApiProductGet = ApiNormalResponse & { data: ProductType };
-export type ApiProductDeleteMany = ApiNormalResponse & {
+
+export type ApiSubcategoryGet = ApiNormalResponse & { data: SubcategoryType };
+export type ApiSubcategoryDeleteMany = ApiNormalResponse & {
   data: { count: number };
 };
 
-export type ApiProductGetAllParams = {
+export type ApiSubcategoryGetAllParams = {
   page?: number;
   limit?: number;
   orderBy?: string;
   order?: "asc" | "desc";
   search?: string;
-  subcategoryId?: string;
+  categoryId?: string;
 };
 
-export const productAPI = (axiosInstance: AxiosInstance) => ({
-  getAll: (params?: ApiProductGetAllParams, config?: AxiosRequestConfig) =>
+export const subcategoryAPI = (axiosInstance: AxiosInstance) => ({
+  getAll: (params?: ApiSubcategoryGetAllParams, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
       const stringifiedParams = params ? qString(params) : "";
-      const response = await axiosInstance.get<ApiProductGetAll>(
-        stringifiedParams ? `/product?${stringifiedParams}` : "/product",
+      const response = await axiosInstance.get<ApiSubcategoryGetAll>(
+        stringifiedParams ? `/subcategory?${stringifiedParams}` : "/subcategory",
         config,
       );
       return response.data;
@@ -72,17 +62,17 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
 
   get: (id: string, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
-      const response = await axiosInstance.get<ApiProductGet>(
-        `/product/${id}`,
+      const response = await axiosInstance.get<ApiSubcategoryGet>(
+        `/subcategory/${id}`,
         config,
       );
       return response.data;
     }),
 
-  create: (data: ApiProductCreate, config?: AxiosRequestConfig) =>
+  create: (data: ApiSubcategoryCreate, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
-      const response = await axiosInstance.post<ApiProductGet>(
-        "/product",
+      const response = await axiosInstance.post<ApiSubcategoryGet>(
+        "/subcategory",
         data,
         config,
       );
@@ -91,12 +81,12 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
 
   update: (
     id: string,
-    data: ApiProductUpdate,
+    data: ApiSubcategoryUpdate,
     config?: AxiosRequestConfig,
   ) =>
     unwrapApiError(async () => {
-      const response = await axiosInstance.put<ApiProductGet>(
-        `/product/${id}`,
+      const response = await axiosInstance.put<ApiSubcategoryGet>(
+        `/subcategory/${id}`,
         data,
         config,
       );
@@ -106,7 +96,7 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
   delete: (id: string, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
       const response = await axiosInstance.delete<ApiNormalResponse>(
-        `/product/${id}`,
+        `/subcategory/${id}`,
         config,
       );
       return response.data;
@@ -114,8 +104,8 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
 
   deleteMany: (ids: string[], config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
-      const response = await axiosInstance.post<ApiProductDeleteMany>(
-        "/product/delete-many",
+      const response = await axiosInstance.post<ApiSubcategoryDeleteMany>(
+        "/subcategory/delete-many",
         { ids },
         config,
       );

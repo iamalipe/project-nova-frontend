@@ -6,6 +6,8 @@ import registerRoute from "./auth/register/register-route";
 import oauthConsentRoute from "./oauth/oauth-consent-route";
 import homeRoute from "./private-admin/home/home-route";
 import privateAdminRoute from "./private-admin/private-admin-route";
+import categoryRoute from "./private-admin/category/category-route";
+import subcategoryRoute from "./private-admin/subcategory/subcategory-route";
 import productRoute from "./private-admin/product/product-route";
 import userRoute from "./private-admin/user/user-route";
 import publicHomeRoute from "./public-home/public-home-route";
@@ -22,6 +24,8 @@ export const routeTree = rootRoute.addChildren([
   publicHomeRoute,
   privateAdminRoute.addChildren([
     homeRoute,
+    categoryRoute,
+    subcategoryRoute,
     productRoute,
     userRoute,
     settingsRoute.addChildren([

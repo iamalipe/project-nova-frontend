@@ -3,68 +3,50 @@ import type { ApiNormalResponse, TableConfigType } from "@/types/generic-type";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import { unwrapApiError } from "./api-utils";
 
-export type ProductType = {
+export type CategoryType = {
   id: string;
   name: string;
-  description: string | null;
-  subcategoryId: string;
   sku: string;
-  mrp: number;
-  mop: number;
+  description: string | null;
   images: string | null;
-  userId: string;
   createdAt: string;
   updatedAt: string;
-  subcategory?: {
-    id: string;
-    name: string;
-    sku: string;
-    categoryId: string;
-    category?: {
-      id: string;
-      name: string;
-      sku: string;
-    };
-  };
 };
 
-export type ApiProductCreate = {
+export type ApiCategoryCreate = {
   name: string;
-  description?: string;
-  subcategoryId: string;
-  mrp: number;
-  mop: number;
-  images?: string;
+  description?: string | null;
+  images?: string | null;
 };
 
-export type ApiProductUpdate = Partial<ApiProductCreate>;
+export type ApiCategoryUpdate = Partial<ApiCategoryCreate>;
 
-export type ApiProductGetAll = ApiNormalResponse & {
-  data: ProductType[];
+export type ApiCategoryGetAll = ApiNormalResponse & {
+  data: CategoryType[];
   pagination: { total: number; page: number; limit: number };
   sort: { orderBy: string; order: "asc" | "desc" };
   config?: TableConfigType;
 };
-export type ApiProductGet = ApiNormalResponse & { data: ProductType };
-export type ApiProductDeleteMany = ApiNormalResponse & {
+
+export type ApiCategoryGet = ApiNormalResponse & { data: CategoryType };
+export type ApiCategoryDeleteMany = ApiNormalResponse & {
   data: { count: number };
 };
 
-export type ApiProductGetAllParams = {
+export type ApiCategoryGetAllParams = {
   page?: number;
   limit?: number;
   orderBy?: string;
   order?: "asc" | "desc";
   search?: string;
-  subcategoryId?: string;
 };
 
-export const productAPI = (axiosInstance: AxiosInstance) => ({
-  getAll: (params?: ApiProductGetAllParams, config?: AxiosRequestConfig) =>
+export const categoryAPI = (axiosInstance: AxiosInstance) => ({
+  getAll: (params?: ApiCategoryGetAllParams, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
       const stringifiedParams = params ? qString(params) : "";
-      const response = await axiosInstance.get<ApiProductGetAll>(
-        stringifiedParams ? `/product?${stringifiedParams}` : "/product",
+      const response = await axiosInstance.get<ApiCategoryGetAll>(
+        stringifiedParams ? `/category?${stringifiedParams}` : "/category",
         config,
       );
       return response.data;
@@ -72,17 +54,17 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
 
   get: (id: string, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
-      const response = await axiosInstance.get<ApiProductGet>(
-        `/product/${id}`,
+      const response = await axiosInstance.get<ApiCategoryGet>(
+        `/category/${id}`,
         config,
       );
       return response.data;
     }),
 
-  create: (data: ApiProductCreate, config?: AxiosRequestConfig) =>
+  create: (data: ApiCategoryCreate, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
-      const response = await axiosInstance.post<ApiProductGet>(
-        "/product",
+      const response = await axiosInstance.post<ApiCategoryGet>(
+        "/category",
         data,
         config,
       );
@@ -91,12 +73,12 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
 
   update: (
     id: string,
-    data: ApiProductUpdate,
+    data: ApiCategoryUpdate,
     config?: AxiosRequestConfig,
   ) =>
     unwrapApiError(async () => {
-      const response = await axiosInstance.put<ApiProductGet>(
-        `/product/${id}`,
+      const response = await axiosInstance.put<ApiCategoryGet>(
+        `/category/${id}`,
         data,
         config,
       );
@@ -106,7 +88,7 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
   delete: (id: string, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
       const response = await axiosInstance.delete<ApiNormalResponse>(
-        `/product/${id}`,
+        `/category/${id}`,
         config,
       );
       return response.data;
@@ -114,8 +96,8 @@ export const productAPI = (axiosInstance: AxiosInstance) => ({
 
   deleteMany: (ids: string[], config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
-      const response = await axiosInstance.post<ApiProductDeleteMany>(
-        "/product/delete-many",
+      const response = await axiosInstance.post<ApiCategoryDeleteMany>(
+        "/category/delete-many",
         { ids },
         config,
       );

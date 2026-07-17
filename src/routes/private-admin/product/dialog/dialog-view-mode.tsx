@@ -59,10 +59,7 @@ const DialogViewMode = ({ data }: ProductDialogProps) => {
           <DialogHeader className="flex-none">
             <DialogTitle>Product</DialogTitle>
             <DialogDescription>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Recusandae ipsum porro sapiente! Perferendis harum dolorem culpa
-              perspiciatis incidunt labore laborum quae ratione at voluptatum.
-              Nam porro delectus eos autem reiciendis?
+              View detail information of this Product.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-1 flex-col overflow-auto px-2">
@@ -71,14 +68,34 @@ const DialogViewMode = ({ data }: ProductDialogProps) => {
                 <span>{data.name}</span>
               </ViewField>
             )}
-            {data?.category && (
-              <ViewField label="Category">
-                <span>{data.category}</span>
+            {data?.sku && (
+              <ViewField label="SKU">
+                <span className="font-mono font-bold text-primary">{data.sku}</span>
               </ViewField>
             )}
-            {data?.price && (
-              <ViewField label="Price">
-                <span>{data.price}</span>
+            {data?.subcategory?.category?.name && (
+              <ViewField label="Category">
+                <span>{data.subcategory.category.name}</span>
+              </ViewField>
+            )}
+            {data?.subcategory?.name && (
+              <ViewField label="Subcategory">
+                <span>{data.subcategory.name}</span>
+              </ViewField>
+            )}
+            {data?.mrp && (
+              <ViewField label="MRP">
+                <span>${data.mrp}</span>
+              </ViewField>
+            )}
+            {data?.mop && (
+              <ViewField label="MOP">
+                <span>${data.mop}</span>
+              </ViewField>
+            )}
+            {data?.images && (
+              <ViewField label="Images">
+                <span className="truncate max-w-[250px]">{data.images}</span>
               </ViewField>
             )}
             {data?.description && (
