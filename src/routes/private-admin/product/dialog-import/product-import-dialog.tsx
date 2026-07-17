@@ -30,8 +30,6 @@ export default function ProductImportDialog({ state: _state }: ProductImportDial
   const subcategoriesQuery = apiQuery.subcategory.useGetAll({ page: 0 });
   const { isLoading } = useQueryLoadingState([subcategoriesQuery]);
 
-  if (isLoading) return <DialogSkeleton />;
-
   const subcategories = subcategoriesQuery.data?.data || [];
 
   const columns: ImportColumn[] = useMemo(() => [
@@ -79,6 +77,8 @@ export default function ProductImportDialog({ state: _state }: ProductImportDial
       type: "string",
     },
   ], [subcategories]);
+
+  if (isLoading) return <DialogSkeleton />;
 
   const handleClose = () => {
     navigate({

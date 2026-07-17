@@ -28,8 +28,6 @@ export default function SubcategoryImportDialog({ state: _state }: SubcategoryIm
   const categoriesQuery = apiQuery.category.useGetAll({ page: 0 });
   const { isLoading } = useQueryLoadingState([categoriesQuery]);
 
-  if (isLoading) return <DialogSkeleton />;
-
   const categories = categoriesQuery.data?.data || [];
 
   const columns: ImportColumn[] = useMemo(() => [
@@ -63,6 +61,8 @@ export default function SubcategoryImportDialog({ state: _state }: SubcategoryIm
       type: "string",
     },
   ], [categories]);
+
+  if (isLoading) return <DialogSkeleton />;
 
   const handleClose = () => {
     navigate({
