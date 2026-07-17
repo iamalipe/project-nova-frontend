@@ -18,6 +18,8 @@ export const getAllZodSchema = z.object({
     .transform((val) => (val === "" || val === undefined ? "createdAt" : val))
     .default("createdAt"),
   search: z.string().optional(),
+  categoryId: z.string().uuid().optional(),
+  subcategoryId: z.string().uuid().optional(),
 });
 
 const productRoute = createRoute({

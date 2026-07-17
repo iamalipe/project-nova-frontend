@@ -6,7 +6,7 @@ import ProductSkeleton from "./product-skeleton";
 
 const ProductRoot = () => {
   const searchData = useSearch({ from: "/app/product" });
-  const sanitizedSearchData = deleteKeysFromObject(searchData, ["ds"]);
+  const sanitizedSearchData = deleteKeysFromObject(searchData, ["ds", "categoryId"]);
   const getAllProductQuery = apiQuery.product.useGetAll(sanitizedSearchData);
   const isLoading = getAllProductQuery.isLoading;
 

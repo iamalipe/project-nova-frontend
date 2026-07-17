@@ -12,6 +12,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Plus, Upload } from "lucide-react";
 import { dialogStateZodSchema } from "../private-admin-route";
 import apiQuery from "@/hooks/use-api-query";
+import { ProductFilterSheet } from "./product-filter-sheet";
 
 const PRODUCT_ROUTE_FROM = "/app/product";
 const PRODUCT_DIALOG = "Product";
@@ -105,6 +106,7 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
             placeholder={tableConfig.searchPlaceholder}
           />
         )}
+        <ProductFilterSheet />
       </div>
       <div className="flex gap-2">
         <Button title="All Products" variant="outline" onClick={onAllProducts}>

@@ -12,6 +12,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Plus, Upload } from "lucide-react";
 import { dialogStateZodSchema } from "../private-admin-route";
 import apiQuery from "@/hooks/use-api-query";
+import { SubcategoryFilterSheet } from "./subcategory-filter-sheet";
 
 const SUBCATEGORY_ROUTE_FROM = "/app/subcategory";
 const SUBCATEGORY_DIALOG = "Subcategory";
@@ -105,6 +106,7 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
             placeholder={tableConfig.searchPlaceholder}
           />
         )}
+        <SubcategoryFilterSheet />
       </div>
       <div className="flex gap-2">
         <Button title="All Subcategories" variant="outline" onClick={onAllSubcategories}>
