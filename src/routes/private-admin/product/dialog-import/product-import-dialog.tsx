@@ -3,6 +3,7 @@ import apiQuery from "@/hooks/use-api-query";
 import useQueryLoadingState from "@/hooks/use-query-loading-state";
 import { z } from "zod";
 import { useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
 import type { DialogStateType } from "@/routes/private-admin/private-admin-route";
 import DialogSkeleton from "../dialog/dialog-skeleton";
 
@@ -14,51 +15,6 @@ const recordSchema = z.object({
   url: z.string().url("Invalid URL format").optional().or(z.literal("")),
   description: z.string().max(2000).optional(),
 });
-
-const columns: ImportColumn[] = [
-  {
-    key: "sub-category sku",
-    label: "Sub-Category SKU",
-    description: "The 4-character parent Subcategory SKU. Must exist in database.",
-    required: true,
-    type: "string",
-  },
-  {
-    key: "name",
-    label: "Name",
-    description: "Name of the Product. Must be at least 2 characters.",
-    required: true,
-    type: "string",
-  },
-  {
-    key: "mrp",
-    label: "MRP",
-    description: "Maximum Retail Price (positive decimal).",
-    required: true,
-    type: "number",
-  },
-  {
-    key: "mop",
-    label: "MOP",
-    description: "Market Operating Price (positive decimal).",
-    required: true,
-    type: "number",
-  },
-  {
-    key: "url",
-    label: "URL",
-    description: "Image URL for the Product. (Optional).",
-    required: false,
-    type: "string",
-  },
-  {
-    key: "description",
-    label: "Description",
-    description: "Product description text. (Optional).",
-    required: false,
-    type: "string",
-  },
-];
 
 const sampleCSV = `sub-category sku,name,mrp,mop,url,description
 ELLA,Asus ROG Strix,1899,1749,https://images.unsplash.com/photo-5,High-end gaming laptop with RTX 4080
@@ -77,6 +33,52 @@ export default function ProductImportDialog({ state: _state }: ProductImportDial
   if (isLoading) return <DialogSkeleton />;
 
   const subcategories = subcategoriesQuery.data?.data || [];
+
+  const columns: ImportColumn[] = useMemo(() => [
+    {
+      key: "sub-category sku",
+      label: "Sub-Category SKU",
+      description: "The 4-character parent Subcategory SKU. Must exist in database.",
+      required: true,
+      type: "string",
+      options: subcategories.map((s) => ({ value: s.sku, label: `${s.name} (${s.sku})` })),
+    },
+    {
+      key: "name",
+      label: "Name",
+      description: "Name of the Product. Must be at least 2 characters.",
+      required: true,
+      type: "string",
+    },
+    {
+      key: "mrp",
+      label: "MRP",
+      description: "Maximum Retail Price (positive decimal).",
+      required: true,
+      type: "number",
+    },
+    {
+      key: "mop",
+      label: "MOP",
+      description: "Market Operating Price (positive decimal).",
+      required: true,
+      type: "number",
+    },
+    {
+      key: "url",
+      label: "URL",
+      description: "Image URL for the Product. (Optional).",
+      required: false,
+      type: "string",
+    },
+    {
+      key: "description",
+      label: "Description",
+      description: "Product description text. (Optional).",
+      required: false,
+      type: "string",
+    },
+  ], [subcategories]);
 
   const handleClose = () => {
     navigate({

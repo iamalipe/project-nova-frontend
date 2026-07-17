@@ -3,6 +3,7 @@ import apiQuery from "@/hooks/use-api-query";
 import useQueryLoadingState from "@/hooks/use-query-loading-state";
 import { z } from "zod";
 import { useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
 import type { DialogStateType } from "@/routes/private-admin/private-admin-route";
 import DialogSkeleton from "../dialog/dialog-skeleton";
 
@@ -12,37 +13,6 @@ const recordSchema = z.object({
   url: z.string().url("Invalid URL format").optional().or(z.literal("")),
   description: z.string().max(2000).optional(),
 });
-
-const columns: ImportColumn[] = [
-  {
-    key: "categorysku",
-    label: "Category SKU",
-    description: "The 2-character parent Category SKU. Must exist in database.",
-    required: true,
-    type: "string",
-  },
-  {
-    key: "name",
-    label: "Name",
-    description: "Name of the Subcategory. Must be at least 2 characters.",
-    required: true,
-    type: "string",
-  },
-  {
-    key: "url",
-    label: "URL",
-    description: "Image URL for the Subcategory. (Optional, must be a valid http/https URL if provided).",
-    required: false,
-    type: "string",
-  },
-  {
-    key: "description",
-    label: "Description",
-    description: "A detailed description of the Subcategory. (Optional).",
-    required: false,
-    type: "string",
-  },
-];
 
 const sampleCSV = `categorysku,name,url,description
 EL,Microwaves,https://images.unsplash.com/photo-3,Countertop kitchen microwaves
@@ -61,6 +31,38 @@ export default function SubcategoryImportDialog({ state: _state }: SubcategoryIm
   if (isLoading) return <DialogSkeleton />;
 
   const categories = categoriesQuery.data?.data || [];
+
+  const columns: ImportColumn[] = useMemo(() => [
+    {
+      key: "categorysku",
+      label: "Category SKU",
+      description: "The 2-character parent Category SKU. Must exist in database.",
+      required: true,
+      type: "string",
+      options: categories.map((c) => ({ value: c.sku, label: `${c.name} (${c.sku})` })),
+    },
+    {
+      key: "name",
+      label: "Name",
+      description: "Name of the Subcategory. Must be at least 2 characters.",
+      required: true,
+      type: "string",
+    },
+    {
+      key: "url",
+      label: "URL",
+      description: "Image URL for the Subcategory. (Optional, must be a valid http/https URL if provided).",
+      required: false,
+      type: "string",
+    },
+    {
+      key: "description",
+      label: "Description",
+      description: "A detailed description of the Subcategory. (Optional).",
+      required: false,
+      type: "string",
+    },
+  ], [categories]);
 
   const handleClose = () => {
     navigate({

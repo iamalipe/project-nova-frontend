@@ -35,6 +35,7 @@ export interface ImportColumn {
   description: string;
   required: boolean;
   type: "string" | "number";
+  options?: { value: string; label: string }[];
 }
 
 interface BulkImportDialogProps {
@@ -107,6 +108,7 @@ export function BulkImportDialog({
   const [step, setStep] = useState<"INPUT" | "PREVIEW">("INPUT");
   const [csvText, setCsvText] = useState("");
   const [previewData, setPreviewData] = useState<Record<string, string>[]>([]);
+  const [databaseErrors, setDatabaseErrors] = useState<Record<string, string>>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sortConfig, setSortConfig] = useState<{
@@ -122,6 +124,7 @@ export function BulkImportDialog({
     setStep("INPUT");
     setCsvText("");
     setPreviewData([]);
+    setDatabaseErrors({});
     setCurrentPage(1);
     setSortConfig(null);
     onClose();
@@ -163,7 +166,7 @@ export function BulkImportDialog({
       // Read headers (case-insensitive trim)
       const headers = parsed[0].map((h) => h.toLowerCase().trim().replace(/[-_\s]/g, ""));
       
-      // Check for required column mappings
+      // Check for required column mappings (use key since key is the actual CSV header name)
       const missingColumns = columns
         .filter((col) => col.required)
         .filter(
@@ -173,7 +176,7 @@ export function BulkImportDialog({
 
       if (missingColumns.length > 0) {
         toast.error(
-          `Missing required columns: ${missingColumns.map((c) => c.label).join(", ")}`
+          `Missing required CSV headers: ${missingColumns.map((c) => c.key).join(", ")}`
         );
         return;
       }
@@ -193,6 +196,7 @@ export function BulkImportDialog({
         return record;
       });
 
+      setDatabaseErrors({});
       setPreviewData(dataRows);
       setStep("PREVIEW");
       setCurrentPage(1);
@@ -206,11 +210,22 @@ export function BulkImportDialog({
     setPreviewData((prev) =>
       prev.map((row) => (row._tempId === tempId ? { ...row, [key]: value } : row))
     );
+    // Clear any database validation error for this row when it's edited
+    setDatabaseErrors((prev) => {
+      const updated = { ...prev };
+      delete updated[tempId];
+      return updated;
+    });
   };
 
   // Row deletion callback
   const handleRowDelete = (tempId: string) => {
     setPreviewData((prev) => prev.filter((row) => row._tempId !== tempId));
+    setDatabaseErrors((prev) => {
+      const updated = { ...prev };
+      delete updated[tempId];
+      return updated;
+    });
   };
 
   // Sorting
@@ -244,18 +259,20 @@ export function BulkImportDialog({
     return items;
   }, [previewData, sortConfig, columns]);
 
-  // Reactive row validation
+  // Reactive row validation + merge database insertion error responses
   const validatedRows = useMemo(() => {
     return sortedRows.map((row) => {
       const valResult = validateRow(row);
+      const dbErr = databaseErrors[row._tempId];
+      const errors = dbErr ? [...valResult.errors, dbErr] : valResult.errors;
       return {
         ...row,
-        _valid: valResult.valid,
-        _errors: valResult.errors,
+        _valid: valResult.valid && !dbErr,
+        _errors: errors,
         _resolved: valResult.resolvedData,
       } as any;
     });
-  }, [sortedRows, validateRow]);
+  }, [sortedRows, validateRow, databaseErrors]);
 
   // Pagination bounds
   const totalPages = Math.max(1, Math.ceil(validatedRows.length / limit));
@@ -280,19 +297,45 @@ export function BulkImportDialog({
 
     setIsSubmitting(true);
     try {
-      // Use resolved payloads
       const payloads = validatedRows.map((row) => row._resolved);
       const res = await onImport(payloads);
       
       const successCount = res.info?.success ?? res.data?.count ?? payloads.length;
       const failedCount = res.info?.failed ?? 0;
+      const failedItems = res.data?.failed || [];
 
-      if (failedCount > 0) {
-        toast.warning(`Import complete. ${successCount} successful, ${failedCount} failed.`);
+      if (failedCount > 0 && failedItems.length > 0) {
+        // Keep ONLY the failed items in the previewData table and show their database insertion error
+        const failedPreviewRows = previewData.filter((_row, idx) => {
+          const resolved = validatedRows[idx]?._resolved;
+          if (!resolved) return false;
+
+          // Find if this resolved payload matches any in the failedItems returned from the API
+          return failedItems.some((failed: any) => {
+            return Object.keys(resolved).every((key) => {
+              if (resolved[key] === null || resolved[key] === undefined) {
+                return failed[key] === null || failed[key] === undefined;
+              }
+              if (typeof resolved[key] === "object") return true; // skip deep nesting
+              return String(resolved[key]) === String(failed[key]);
+            });
+          });
+        });
+
+        // Set specific error message for each failed row
+        const newDbErrors: Record<string, string> = {};
+        failedPreviewRows.forEach((r) => {
+          newDbErrors[r._tempId] = "Database constraint violation (duplicate key, unique name or code already exists).";
+        });
+
+        setDatabaseErrors(newDbErrors);
+        setPreviewData(failedPreviewRows);
+        setCurrentPage(1);
+        toast.error(`Import complete with errors: ${successCount} imported successfully, ${failedCount} failed.`);
       } else {
         toast.success(`Successfully imported ${successCount} record(s).`);
+        handleClose();
       }
-      handleClose();
     } catch (err: any) {
       toast.error(err.message || "Failed to persist records.");
     } finally {
@@ -313,18 +356,20 @@ export function BulkImportDialog({
             {/* Column descriptions mapping info */}
             <div className="rounded-md border bg-muted/30 p-3 text-xs flex flex-col gap-2">
               <span className="font-semibold text-foreground">Column Mapping Instructions:</span>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <span className="text-muted-foreground -mt-1">Use these exact column headers in the first row of your CSV input.</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
                 {columns.map((c) => (
                   <div key={c.key} className="flex flex-col border-b border-border/40 pb-1">
                     <div className="flex gap-2 items-center">
-                      <span className="font-mono font-bold text-primary">{c.label}</span>
+                      <span className="font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded text-[11px]">{c.key}</span>
+                      <span className="text-[10px] text-muted-foreground font-medium">({c.label})</span>
                       {c.required ? (
-                        <span className="text-[10px] bg-red-100 dark:bg-red-900/40 text-red-600 px-1 rounded">Required</span>
+                        <span className="text-[9px] bg-red-100 dark:bg-red-900/40 text-red-600 px-1 rounded font-bold">Required</span>
                       ) : (
-                        <span className="text-[10px] bg-muted text-muted-foreground px-1 rounded">Optional</span>
+                        <span className="text-[9px] bg-muted text-muted-foreground px-1 rounded">Optional</span>
                       )}
                     </div>
-                    <span className="text-muted-foreground mt-0.5">{c.description}</span>
+                    <span className="text-muted-foreground mt-1 text-[11px] leading-relaxed">{c.description}</span>
                   </div>
                 ))}
               </div>
@@ -411,7 +456,7 @@ export function BulkImportDialog({
               <Table className="relative">
                 <TableHeader className="sticky top-0 bg-background z-10">
                   <TableRow>
-                    <TableHead className="w-12 text-center">Status</TableHead>
+                    <TableHead className="w-12 text-center font-bold">Status</TableHead>
                     {columns.map((c) => (
                       <TableHead key={c.key}>
                         <button
@@ -423,7 +468,7 @@ export function BulkImportDialog({
                         </button>
                       </TableHead>
                     ))}
-                    <TableHead className="w-12 text-center">Action</TableHead>
+                    <TableHead className="w-12 text-center font-bold">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -447,17 +492,34 @@ export function BulkImportDialog({
                         )}
                       </TableCell>
 
-                      {/* Columns inputs */}
+                      {/* Columns inputs or Select menus */}
                       {columns.map((col) => (
                         <TableCell key={col.key} className="p-1 min-w-[140px]">
-                          <input
-                            type="text"
-                            value={row[col.key] || ""}
-                            onChange={(e) =>
-                              handleCellChange(row._tempId, col.key, e.target.value)
-                            }
-                            className="w-full text-xs bg-transparent border-0 border-b border-border/20 px-2 py-1 rounded focus:bg-background focus:ring-1 focus:ring-primary"
-                          />
+                          {col.options ? (
+                            <select
+                              value={row[col.key] || ""}
+                              onChange={(e) =>
+                                handleCellChange(row._tempId, col.key, e.target.value)
+                              }
+                              className="w-full text-xs bg-transparent border-0 border-b border-border/20 px-2 py-1.5 rounded focus:bg-background focus:ring-1 focus:ring-primary dark:bg-popover outline-none"
+                            >
+                              <option value="">Select option</option>
+                              {col.options.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              type="text"
+                              value={row[col.key] || ""}
+                              onChange={(e) =>
+                                handleCellChange(row._tempId, col.key, e.target.value)
+                              }
+                              className="w-full text-xs bg-transparent border-0 border-b border-border/20 px-2 py-1 rounded focus:bg-background focus:ring-1 focus:ring-primary outline-none"
+                            />
+                          )}
                         </TableCell>
                       ))}
 
