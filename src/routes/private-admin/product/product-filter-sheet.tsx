@@ -1,17 +1,17 @@
-import { useEffect, useState, useMemo } from "react"
-import { useNavigate, useSearch } from "@tanstack/react-router"
-import { Filter, RotateCcw } from "lucide-react"
-import apiQuery from "@/hooks/use-api-query"
 import { Button } from "@/components/ui/button"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import {
   Sheet,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetFooter,
 } from "@/components/ui/sheet"
+import apiQuery from "@/hooks/use-api-query"
+import { useNavigate, useSearch } from "@tanstack/react-router"
+import { Filter, RotateCcw } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
 
 const PRODUCT_ROUTE_FROM = "/app/product"
 
@@ -96,26 +96,28 @@ export const ProductFilterSheet = () => {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger
         render={
-          <Button variant="outline" className="gap-2 relative">
+          <Button variant="outline" className="relative gap-2">
             <Filter className="h-4 w-4" />
             Filter
             {activeFiltersCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-background">
+              <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-primary text-[10px] font-bold text-primary-foreground">
                 {activeFiltersCount}
               </span>
             )}
           </Button>
         }
       />
-      <SheetContent side="right" className="sm:max-w-sm flex flex-col h-full">
+      <SheetContent side="right" className="flex h-full flex-col sm:max-w-sm">
         <SheetHeader className="border-b pb-4">
           <SheetTitle>Filter Products</SheetTitle>
         </SheetHeader>
 
-        <div className="flex-1 py-4 flex flex-col gap-4">
+        <div className="flex flex-1 flex-col gap-4 px-4">
           {/* Category */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-muted-foreground">Category</label>
+            <label className="text-sm font-medium text-muted-foreground">
+              Category
+            </label>
             <NativeSelect
               value={tempCategoryId}
               className="w-full"
@@ -132,13 +134,17 @@ export const ProductFilterSheet = () => {
 
           {/* Subcategory */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-muted-foreground">Subcategory</label>
+            <label className="text-sm font-medium text-muted-foreground">
+              Subcategory
+            </label>
             <NativeSelect
               value={tempSubcategoryId}
               className="w-full"
               onChange={(e) => setTempSubcategoryId(e.target.value)}
             >
-              <NativeSelectOption value="">All Subcategories</NativeSelectOption>
+              <NativeSelectOption value="">
+                All Subcategories
+              </NativeSelectOption>
               {filteredSubcategories.map((s) => (
                 <NativeSelectOption key={s.id} value={s.id}>
                   {s.name}
@@ -148,7 +154,7 @@ export const ProductFilterSheet = () => {
           </div>
         </div>
 
-        <SheetFooter className="border-t pt-4 flex-row gap-2 mt-auto">
+        <SheetFooter className="mt-auto flex-row gap-2 border-t pt-4">
           <Button
             type="button"
             variant="outline"
@@ -159,11 +165,7 @@ export const ProductFilterSheet = () => {
             <RotateCcw className="h-4 w-4" />
             Reset
           </Button>
-          <Button
-            type="button"
-            className="flex-1"
-            onClick={handleApply}
-          >
+          <Button type="button" className="flex-1" onClick={handleApply}>
             Apply Filters
           </Button>
         </SheetFooter>
