@@ -23,6 +23,8 @@ import { generalQuery } from "./api-query/general-query"
 import { oauthQuery } from "./api-query/oauth-query"
 import { productQuery } from "./api-query/product-query"
 import { userQuery } from "./api-query/user-query"
+import { countryQuery } from "./api-query/country-query"
+import { stateQuery } from "./api-query/state-query"
 
 const apiQuery = {
   auth: authQuery(queryClient),
@@ -32,6 +34,8 @@ const apiQuery = {
   oauth: oauthQuery(queryClient),
   product: productQuery(queryClient),
   user: userQuery(queryClient),
+  country: countryQuery(queryClient),
+  state: stateQuery(queryClient),
 }
 
 export type ApiQuery = typeof apiQuery

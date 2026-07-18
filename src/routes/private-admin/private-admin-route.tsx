@@ -7,7 +7,7 @@ import { z } from "zod";
 
 export const dialogStateZodSchema = z.object({
   mode: z.enum(["CREATE", "UPDATE", "VIEW", "VIEW-ALL", "IMPORT"]).optional(),
-  dialog: z.enum(["Product", "User", "Category", "Subcategory"]).optional(),
+  dialog: z.enum(["Product", "User", "Category", "Subcategory", "Country", "CountryState"]).optional(),
   id: z.uuid().optional(),
 });
 export type DialogStateType = z.infer<typeof dialogStateZodSchema>;

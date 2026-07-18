@@ -10,6 +10,8 @@ import categoryRoute from "./private-admin/category/category-route";
 import subcategoryRoute from "./private-admin/subcategory/subcategory-route";
 import productRoute from "./private-admin/product/product-route";
 import userRoute from "./private-admin/user/user-route";
+import countryRoute from "./private-admin/country/country-route";
+import stateRoute from "./private-admin/state/state-route";
 import publicHomeRoute from "./public-home/public-home-route";
 
 import settingsRoute from "./private-admin/settings/settings-route";
@@ -28,6 +30,8 @@ export const routeTree = rootRoute.addChildren([
     subcategoryRoute,
     productRoute,
     userRoute,
+    countryRoute,
+    stateRoute,
     settingsRoute.addChildren([
       settingsProfileRoute,
       settingsSecurityRoute,

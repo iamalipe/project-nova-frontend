@@ -8,6 +8,8 @@ import { subcategoryAPI } from "./subcategory-api";
 import { oauthAPI } from "./oauth-api";
 import { productAPI } from "./product-api";
 import { userAPI } from "./user-api";
+import { countryAPI } from "./country-api";
+import { stateAPI } from "./state-api";
 
 // Axios instance configuration
 export const axiosInstance = axios.create({
@@ -29,6 +31,8 @@ const api = {
   subcategory: subcategoryAPI(axiosInstance),
   product: productAPI(axiosInstance),
   user: userAPI(axiosInstance),
+  country: countryAPI(axiosInstance),
+  state: stateAPI(axiosInstance),
   oauth: oauthAPI(oauthAxiosInstance),
 };
 

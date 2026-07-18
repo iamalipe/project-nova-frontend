@@ -16,6 +16,10 @@ import ProductDialogAll from "@/routes/private-admin/product/dialog-all/product-
 import ProductDialog from "@/routes/private-admin/product/dialog/product-dialog";
 import ProductImportDialog from "@/routes/private-admin/product/dialog-import/product-import-dialog";
 import UserDialog from "@/routes/private-admin/user/dialog/user-dialog";
+import CountryDialog from "@/routes/private-admin/country/dialog/country-dialog";
+import CountryDialogAll from "@/routes/private-admin/country/dialog-all/country-delete-all-dialog";
+import StateDialog from "@/routes/private-admin/state/dialog/state-dialog";
+import StateDialogAll from "@/routes/private-admin/state/dialog-all/state-dialog-all";
 
 type DialogName = NonNullable<DialogStateType["dialog"]>;
 
@@ -68,6 +72,24 @@ const dialogRegistry: Record<
     }
     if (state.mode && ["IMPORT"].includes(state.mode)) {
       return <SubcategoryImportDialog state={state} />;
+    }
+    return null;
+  },
+  Country: ({ state }) => {
+    if (state.mode && ["CREATE", "UPDATE", "VIEW"].includes(state.mode)) {
+      return <CountryDialog state={state} />;
+    }
+    if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
+      return <CountryDialogAll state={state} />;
+    }
+    return null;
+  },
+  CountryState: ({ state }) => {
+    if (state.mode && ["CREATE", "UPDATE", "VIEW"].includes(state.mode)) {
+      return <StateDialog state={state} />;
+    }
+    if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
+      return <StateDialogAll state={state} />;
     }
     return null;
   },
