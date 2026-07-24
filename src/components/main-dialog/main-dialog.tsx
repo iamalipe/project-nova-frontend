@@ -25,14 +25,28 @@ import StateDialog from "@/routes/private-admin/state/dialog/state-dialog";
 import StateDialogAll from "@/routes/private-admin/state/dialog-all/state-dialog-all";
 import StateImportDialog from "@/routes/private-admin/state/dialog-import/state-import-dialog";
 
+import StoreDialog from "@/routes/private-admin/store/dialog/store-dialog";
+import StoreDialogAll from "@/routes/private-admin/store/dialog-all/store-dialog-all";
+import StoreImportDialog from "@/routes/private-admin/store/dialog-import/store-import-dialog";
+
+import WarehouseDialog from "@/routes/private-admin/warehouse/dialog/warehouse-dialog";
+import WarehouseDialogAll from "@/routes/private-admin/warehouse/dialog-all/warehouse-dialog-all";
+import WarehouseImportDialog from "@/routes/private-admin/warehouse/dialog-import/warehouse-import-dialog";
+
+import StockDialog from "@/routes/private-admin/stock/dialog/stock-dialog";
+import StockDialogAll from "@/routes/private-admin/stock/dialog-all/stock-dialog-all";
+import StockImportDialog from "@/routes/private-admin/stock/dialog-import/stock-import-dialog";
+
+import StockTransactionDialog from "@/routes/private-admin/stock-transaction/dialog/stock-transaction-dialog";
+import StockTransactionDialogAll from "@/routes/private-admin/stock-transaction/dialog-all/stock-transaction-dialog-all";
+import StockTransactionImportDialog from "@/routes/private-admin/stock-transaction/dialog-import/stock-transaction-import-dialog";
+
+import SellDialog from "@/routes/private-admin/sell/dialog/sell-dialog";
+import SellDialogAll from "@/routes/private-admin/sell/dialog-all/sell-dialog-all";
+import SellImportDialog from "@/routes/private-admin/sell/dialog-import/sell-import-dialog";
+
 type DialogName = NonNullable<DialogStateType["dialog"]>;
 
-/**
- * Registry mapping a dialog name (from `dialogStateZodSchema`) to the
- * component responsible for rendering it. Adding support for a new
- * dialog is a one-line addition here instead of editing branching logic
- * in this file.
- */
 const dialogRegistry: Record<
   DialogName,
   React.ComponentType<{ state: DialogStateType }>
@@ -106,6 +120,66 @@ const dialogRegistry: Record<
     }
     if (state.mode && ["IMPORT"].includes(state.mode)) {
       return <StateImportDialog state={state} />;
+    }
+    return null;
+  },
+  Store: ({ state }) => {
+    if (state.mode && ["CREATE", "UPDATE", "VIEW"].includes(state.mode)) {
+      return <StoreDialog state={state} />;
+    }
+    if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
+      return <StoreDialogAll state={state} />;
+    }
+    if (state.mode && ["IMPORT"].includes(state.mode)) {
+      return <StoreImportDialog state={state} />;
+    }
+    return null;
+  },
+  Warehouse: ({ state }) => {
+    if (state.mode && ["CREATE", "UPDATE", "VIEW"].includes(state.mode)) {
+      return <WarehouseDialog state={state} />;
+    }
+    if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
+      return <WarehouseDialogAll state={state} />;
+    }
+    if (state.mode && ["IMPORT"].includes(state.mode)) {
+      return <WarehouseImportDialog state={state} />;
+    }
+    return null;
+  },
+  Stock: ({ state }) => {
+    if (state.mode && ["CREATE", "UPDATE", "VIEW"].includes(state.mode)) {
+      return <StockDialog state={state} />;
+    }
+    if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
+      return <StockDialogAll state={state} />;
+    }
+    if (state.mode && ["IMPORT"].includes(state.mode)) {
+      return <StockImportDialog state={state} />;
+    }
+    return null;
+  },
+  StockTransaction: ({ state }) => {
+    if (state.mode && ["CREATE", "UPDATE", "VIEW"].includes(state.mode)) {
+      return <StockTransactionDialog state={state} />;
+    }
+    if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
+      return <StockTransactionDialogAll state={state} />;
+    }
+    if (state.mode && ["IMPORT"].includes(state.mode)) {
+      return <StockTransactionImportDialog state={state} />;
+    }
+    return null;
+  },
+  Sell: ({ state }) => {
+    if (state.mode && ["CREATE", "UPDATE", "VIEW"].includes(state.mode)) {
+      return <SellDialog state={state} />;
+    }
+    if (state.mode && ["VIEW-ALL"].includes(state.mode)) {
+      return <SellDialogAll state={state} />;
+    }
+    if (state.mode && ["IMPORT"].includes(state.mode)) {
+      return <SellImportDialog state={state} />;
     }
     return null;
   },

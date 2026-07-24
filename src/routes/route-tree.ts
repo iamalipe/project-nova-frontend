@@ -12,6 +12,11 @@ import productRoute from "./private-admin/product/product-route";
 import userRoute from "./private-admin/user/user-route";
 import countryRoute from "./private-admin/country/country-route";
 import stateRoute from "./private-admin/state/state-route";
+import storeRoute from "./private-admin/store/store-route";
+import warehouseRoute from "./private-admin/warehouse/warehouse-route";
+import stockRoute from "./private-admin/stock/stock-route";
+import stockTransactionRoute from "./private-admin/stock-transaction/stock-transaction-route";
+import sellRoute from "./private-admin/sell/sell-route";
 import publicHomeRoute from "./public-home/public-home-route";
 
 import settingsRoute from "./private-admin/settings/settings-route";
@@ -32,6 +37,11 @@ export const routeTree = rootRoute.addChildren([
     userRoute,
     countryRoute,
     stateRoute,
+    storeRoute,
+    warehouseRoute,
+    stockRoute,
+    stockTransactionRoute,
+    sellRoute,
     settingsRoute.addChildren([
       settingsProfileRoute,
       settingsSecurityRoute,

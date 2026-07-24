@@ -25,6 +25,11 @@ import { productQuery } from "./api-query/product-query"
 import { userQuery } from "./api-query/user-query"
 import { countryQuery } from "./api-query/country-query"
 import { stateQuery } from "./api-query/state-query"
+import { storeQuery } from "./api-query/store-query"
+import { warehouseQuery } from "./api-query/warehouse-query"
+import { stockQuery } from "./api-query/stock-query"
+import { stockTransactionQuery } from "./api-query/stock-transaction-query"
+import { sellQuery } from "./api-query/sell-query"
 
 const apiQuery = {
   auth: authQuery(queryClient),
@@ -36,6 +41,11 @@ const apiQuery = {
   user: userQuery(queryClient),
   country: countryQuery(queryClient),
   state: stateQuery(queryClient),
+  store: storeQuery(queryClient),
+  warehouse: warehouseQuery(queryClient),
+  stock: stockQuery(queryClient),
+  stockTransaction: stockTransactionQuery(queryClient),
+  sell: sellQuery(queryClient),
 }
 
 export type ApiQuery = typeof apiQuery

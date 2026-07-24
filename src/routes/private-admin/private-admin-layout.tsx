@@ -8,19 +8,17 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 
 const PrivateAppLayout = () => {
   return (
-    <>
-      <div className="h-full-x flex flex-col overflow-hidden">
+    <SidebarProvider>
+      <div className="h-full-x flex flex-col overflow-hidden w-full">
         <Header />
         <div className="flex-1 overflow-hidden flex bg-background">
-          <SidebarProvider>
-            <AdminAppSidebar />
-            <Outlet />
-          </SidebarProvider>
+          <AdminAppSidebar />
+          <Outlet />
         </div>
         <Footer />
       </div>
       <MainDialog />
-    </>
+    </SidebarProvider>
   );
 };
 export default PrivateAppLayout;

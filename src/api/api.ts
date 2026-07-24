@@ -10,6 +10,11 @@ import { productAPI } from "./product-api";
 import { userAPI } from "./user-api";
 import { countryAPI } from "./country-api";
 import { stateAPI } from "./state-api";
+import { storeAPI } from "./store-api";
+import { warehouseAPI } from "./warehouse-api";
+import { stockAPI } from "./stock-api";
+import { stockTransactionAPI } from "./stock-transaction-api";
+import { sellAPI } from "./sell-api";
 
 // Axios instance configuration
 export const axiosInstance = axios.create({
@@ -33,6 +38,11 @@ const api = {
   user: userAPI(axiosInstance),
   country: countryAPI(axiosInstance),
   state: stateAPI(axiosInstance),
+  store: storeAPI(axiosInstance),
+  warehouse: warehouseAPI(axiosInstance),
+  stock: stockAPI(axiosInstance),
+  stockTransaction: stockTransactionAPI(axiosInstance),
+  sell: sellAPI(axiosInstance),
   oauth: oauthAPI(oauthAxiosInstance),
 };
 
