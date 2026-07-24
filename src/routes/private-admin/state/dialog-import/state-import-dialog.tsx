@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { DialogStateType } from "@/routes/private-admin/private-admin-route";
-import DialogSkeleton from "../../product/dialog/dialog-skeleton";
+import DialogSkeleton from "../dialog/dialog-skeleton";
 
 const recordSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(255),

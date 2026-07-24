@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { DialogStateType } from "@/routes/private-admin/private-admin-route";
-import DialogSkeleton from "../../product/dialog/dialog-skeleton";
+import DialogSkeleton from "../dialog/dialog-skeleton";
 
 const recordSchema = z.object({
   email: z.string().email("Invalid email format"),

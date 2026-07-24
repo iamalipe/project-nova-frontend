@@ -16,8 +16,6 @@ import apiQuery from "@/hooks/use-api-query"
 import useQueryLoadingState from "@/hooks/use-query-loading-state"
 import { handleFormError } from "@/lib/form"
 import { cn } from "@/lib/utils"
-import { validateAndStringify } from "@/lib/generic-validation"
-import { dialogStateZodSchema } from "../../private-admin-route"
 import type { DialogStateType } from "@/routes/private-admin/private-admin-route"
 import { faker } from "@faker-js/faker"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,6 +24,9 @@ import { DicesIcon } from "lucide-react"
 import { useForm, type Resolver } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
+
+import DialogSkeleton from "./dialog-skeleton"
+import DialogViewMode from "./dialog-view-mode"
 
 const formSchema = z.object({
   name: z.string().min(2).max(255),
@@ -54,91 +55,6 @@ const CountryDialog = ({ state }: CountryDialogProps) => {
 }
 
 export default CountryDialog
-
-const DialogSkeleton = () => {
-  return (
-    <Dialog open={true}>
-      <DialogContent className="sm:max-h-[80vh] sm:max-w-[600px] animate-pulse">
-        <div className="h-6 w-32 bg-muted rounded mb-4" />
-        <div className="h-4 w-full bg-muted rounded mb-2" />
-        <div className="h-10 w-full bg-muted rounded mb-4" />
-        <div className="h-10 w-full bg-muted rounded mb-4" />
-        <div className="h-10 w-full bg-muted rounded mb-4" />
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-const DialogViewMode = ({ data }: CountryDialogProps) => {
-  const navigate = useNavigate()
-  const onClose = () => {
-    navigate({
-      to: "/app/country",
-      search: (prev) => ({
-        ...prev,
-        ds: undefined,
-      }),
-    })
-  }
-
-  const onEdit = () => {
-    if (!data) return
-    const ds = validateAndStringify(dialogStateZodSchema, {
-      dialog: "Country",
-      id: data.id,
-      mode: "UPDATE",
-    })
-
-    if (!ds) return
-    navigate({
-      to: "/app/country",
-      search: (prev) => ({
-        ...prev,
-        ds: ds,
-      }),
-    })
-  }
-
-  return (
-    <Dialog
-      open={true}
-      onOpenChange={(open) => {
-        if (!open) onClose()
-      }}
-    >
-      <DialogContent className="flex flex-col overflow-hidden sm:max-h-[90vh] md:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Country Details</DialogTitle>
-          <DialogDescription>
-            View details for this Country entry.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-1 flex-col overflow-auto px-2 gap-3 py-2">
-          <ViewField label="Name" value={data?.name} />
-          <ViewField label="Flag" value={data?.flag} />
-          <ViewField label="ISO Code (3)" value={data?.code3} />
-          <ViewField label="ISO Code (2)" value={data?.code2} />
-          <ViewField label="Timezone" value={data?.tz} />
-          <ViewField label="Currency Code" value={data?.currency3} />
-          <ViewField label="Currency Symbol" value={data?.currencySymbol} />
-        </div>
-        <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>
-            Cancel
-          </DialogClose>
-          {data && <Button onClick={onEdit}>Edit</Button>}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-const ViewField = ({ label, value }: { label: string; value?: string | null }) => (
-  <div className="flex justify-between border-b py-2 last:border-0">
-    <span className="text-sm font-medium text-muted-foreground">{label}</span>
-    <span className="text-sm font-semibold">{value || "-"}</span>
-  </div>
-)
 
 const DialogMain = ({ data, state }: CountryDialogProps) => {
   const navigate = useNavigate()

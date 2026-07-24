@@ -16,7 +16,7 @@ import useSortClientSide from "@/hooks/use-sort-client-side"
 import type { DialogStateType } from "@/routes/private-admin/private-admin-route"
 import { useNavigate } from "@tanstack/react-router"
 import tableColumns from "../table-columns"
-import DialogSkeleton from "../../product/dialog/dialog-skeleton"
+import DialogSkeleton from "../dialog/dialog-skeleton"
 
 export type UserDialogProps = {
   state: DialogStateType
