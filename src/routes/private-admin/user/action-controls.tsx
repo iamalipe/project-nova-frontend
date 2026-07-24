@@ -2,13 +2,19 @@ import type { ApiUserGetAll } from "@/api/user-api";
 import { AsyncRefreshButton } from "@/components/custom/async-button";
 import ColumnsViewControls from "@/components/data-table/columns-view-controls";
 import SearchInput from "@/components/data-table/search-input";
+import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import apiQuery from "@/hooks/use-api-query";
 import type { DataTableType } from "@/hooks/use-data-table";
+import { validateAndStringify } from "@/lib/generic-validation";
 import type { ApiNormalResponse, TableConfigType } from "@/types/generic-type";
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { Plus, Upload } from "lucide-react";
+import { dialogStateZodSchema } from "../private-admin-route";
 
 const USER_ROUTE_FROM = "/app/user";
+const USER_DIALOG = "User";
 
 export type ActionControlsProps<T> = {
   dataTable: DataTableType<T>;
@@ -25,8 +31,53 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
     from: USER_ROUTE_FROM,
   });
 
+  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser();
+  const isSUPERUSER = currentUserRes?.data?.role === "SUPERUSER";
+
   const onRefresh = async () => {
     await rawQuery.refetch();
+  };
+
+  const onCreate = async () => {
+    const ds = validateAndStringify(dialogStateZodSchema, {
+      dialog: USER_DIALOG,
+      mode: "CREATE",
+    });
+    if (!ds) return;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        ds: ds,
+      }),
+    });
+  };
+
+  const onImport = async () => {
+    const ds = validateAndStringify(dialogStateZodSchema, {
+      dialog: USER_DIALOG,
+      mode: "IMPORT",
+    });
+    if (!ds) return;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        ds: ds,
+      }),
+    });
+  };
+
+  const onAllUsers = async () => {
+    const ds = validateAndStringify(dialogStateZodSchema, {
+      dialog: USER_DIALOG,
+      mode: "VIEW-ALL",
+    });
+    if (!ds) return;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        ds: ds,
+      }),
+    });
   };
 
   const onSearchChange = async (searchValue: string) => {
@@ -56,6 +107,30 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
         )}
       </div>
       <div className="flex gap-2">
+        <Button title="All Users" variant="outline" onClick={onAllUsers}>
+          All Users
+        </Button>
+        {isSUPERUSER && (
+          <>
+            <Button
+              title="Create New"
+              size="icon"
+              variant="outline"
+              data-testid="create-new-button"
+              onClick={onCreate}
+            >
+              <Plus />
+            </Button>
+            <Button
+              title="Import CSV"
+              size="icon"
+              variant="outline"
+              onClick={onImport}
+            >
+              <Upload />
+            </Button>
+          </>
+        )}
         <AsyncRefreshButton
           title="Refresh"
           variant="outline"
@@ -69,3 +144,4 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
 };
 
 export default ActionControls;
+

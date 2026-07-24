@@ -50,6 +50,21 @@ const useUserRowActions = (data: UserType) => {
     })
   }
 
+  const onUpdate = async () => {
+    const ds = validateAndStringify(dialogStateZodSchema, {
+      dialog: "User",
+      id: data.id,
+      mode: "UPDATE",
+    })
+    if (!ds) return
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        ds: ds,
+      }),
+    })
+  }
+
   const onDelete = async () => {
     const deleteRes = await alertPopup.delete()
     if (deleteRes.response) {
@@ -64,12 +79,12 @@ const useUserRowActions = (data: UserType) => {
     }
   }
 
-  return { onView, onDelete, isSUPERUSER, isSelf }
+  return { onView, onUpdate, onDelete, isSUPERUSER, isSelf }
 }
 
 export const TableAction = ({ data }: { data: UserType }) => {
   const isMobile = useIsMobile()
-  const { onView, onDelete, isSUPERUSER, isSelf } = useUserRowActions(data)
+  const { onView, onUpdate, onDelete, isSUPERUSER, isSelf } = useUserRowActions(data)
 
   const showDelete = isSUPERUSER && !isSelf
 
@@ -79,6 +94,11 @@ export const TableAction = ({ data }: { data: UserType }) => {
         <Button onClick={onView} size="sm" variant="outline">
           View
         </Button>
+        {isSUPERUSER && (
+          <Button onClick={onUpdate} size="sm" variant="outline">
+            Update
+          </Button>
+        )}
         {showDelete && (
           <Button onClick={onDelete} size="sm" variant="destructive">
             Delete
@@ -102,6 +122,9 @@ export const TableAction = ({ data }: { data: UserType }) => {
           <DropdownMenuLabel>Action</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
+          {isSUPERUSER && (
+            <DropdownMenuItem onClick={onUpdate}>Update</DropdownMenuItem>
+          )}
           {showDelete && (
             <DropdownMenuItem className="text-destructive" onClick={onDelete}>
               Delete
@@ -114,7 +137,7 @@ export const TableAction = ({ data }: { data: UserType }) => {
 }
 
 export const TableActionContextMenu = ({ data }: { data: UserType }) => {
-  const { onView, onDelete, isSUPERUSER, isSelf } = useUserRowActions(data)
+  const { onView, onUpdate, onDelete, isSUPERUSER, isSelf } = useUserRowActions(data)
 
   const showDelete = isSUPERUSER && !isSelf
 
@@ -124,6 +147,9 @@ export const TableActionContextMenu = ({ data }: { data: UserType }) => {
         <ContextMenuLabel>Action</ContextMenuLabel>
         <ContextMenuSeparator />
         <ContextMenuItem onClick={onView}>View</ContextMenuItem>
+        {isSUPERUSER && (
+          <ContextMenuItem onClick={onUpdate}>Update</ContextMenuItem>
+        )}
         {showDelete && (
           <ContextMenuItem className="text-destructive" onClick={onDelete}>
             Delete

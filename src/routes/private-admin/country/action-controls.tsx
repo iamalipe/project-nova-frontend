@@ -10,7 +10,7 @@ import { validateAndStringify } from "@/lib/generic-validation"
 import type { ApiNormalResponse, TableConfigType } from "@/types/generic-type"
 import type { UseQueryResult } from "@tanstack/react-query"
 import { useNavigate, useSearch } from "@tanstack/react-router"
-import { Plus } from "lucide-react"
+import { Plus, Upload } from "lucide-react"
 import { dialogStateZodSchema } from "../private-admin-route"
 
 const COUNTRY_ROUTE_FROM = "/app/country"
@@ -42,6 +42,20 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: COUNTRY_DIALOG,
       mode: "CREATE",
+    })
+    if (!ds) return
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        ds: ds,
+      }),
+    })
+  }
+
+  const onImport = async () => {
+    const ds = validateAndStringify(dialogStateZodSchema, {
+      dialog: COUNTRY_DIALOG,
+      mode: "IMPORT",
     })
     if (!ds) return
     navigate({
@@ -101,15 +115,25 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
           All Countries
         </Button>
         {isSUPERUSER && (
-          <Button
-            title="Create New"
-            size="icon"
-            variant="outline"
-            data-testid="create-new-button"
-            onClick={onCreate}
-          >
-            <Plus />
-          </Button>
+          <>
+            <Button
+              title="Create New"
+              size="icon"
+              variant="outline"
+              data-testid="create-new-button"
+              onClick={onCreate}
+            >
+              <Plus />
+            </Button>
+            <Button
+              title="Import CSV"
+              size="icon"
+              variant="outline"
+              onClick={onImport}
+            >
+              <Upload />
+            </Button>
+          </>
         )}
         <AsyncRefreshButton
           title="Refresh"
@@ -124,3 +148,4 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
 }
 
 export default ActionControls
+

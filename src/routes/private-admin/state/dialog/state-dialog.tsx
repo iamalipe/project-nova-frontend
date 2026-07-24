@@ -31,8 +31,7 @@ import { z } from "zod"
 const formSchema = z.object({
   name: z.string().min(2).max(255),
   countryId: z.string().uuid("Please select a country"),
-  code2: z.string().length(2),
-  code3: z.string().length(3),
+  subdivisionCode: z.string().min(1, "Subdivision code is required").max(10),
   tz: z.string().optional().nullable(),
   flag: z.string().optional().nullable(),
 })
@@ -127,8 +126,7 @@ const DialogViewMode = ({ data }: StateDialogProps) => {
         <div className="flex flex-1 flex-col overflow-auto px-2 gap-3 py-2">
           <ViewField label="Name" value={data?.name} />
           <ViewField label="Country" value={data?.country?.name} />
-          <ViewField label="ISO Code (2)" value={data?.code2} />
-          <ViewField label="ISO Code (3)" value={data?.code3} />
+          <ViewField label="Subdivision Code (ISO 3166-2)" value={data?.subdivisionCode} />
           <ViewField label="Timezone" value={data?.tz} />
           <ViewField label="Flag" value={data?.flag} />
         </div>
@@ -160,8 +158,7 @@ const DialogMain = ({ data, state, countries }: DialogMainProps) => {
   const defaultValues: FormSchemaType = {
     name: data?.name ?? "",
     countryId: data?.countryId ?? (countries[0]?.id ?? ""),
-    code2: data?.code2 ?? "",
-    code3: data?.code3 ?? "",
+    subdivisionCode: data?.subdivisionCode ?? "",
     tz: data?.tz ?? "",
     flag: data?.flag ?? "",
   }
@@ -177,8 +174,7 @@ const DialogMain = ({ data, state, countries }: DialogMainProps) => {
     form.reset({
       name: faker.location.state(),
       countryId: randomCountry?.id ?? "",
-      code2: faker.string.alpha(2).toUpperCase(),
-      code3: faker.string.alpha(3).toUpperCase(),
+      subdivisionCode: faker.string.alpha(2).toUpperCase(),
       tz: faker.location.timeZone(),
       flag: faker.internet.emoji({ types: ["nature", "smiley", "activity"] }),
     })
@@ -295,50 +291,26 @@ const DialogMain = ({ data, state, countries }: DialogMainProps) => {
               />
             )}
           />
-          <div className="grid grid-cols-2 gap-4">
-            <FormController
-              form={form}
-              name="code2"
-              label="ISO Code (2 letters)"
-              render={({ field, isError, ariaDescribedby }) => (
-                <Input
-                  id={field.name}
-                  type="text"
-                  placeholder="CA"
-                  maxLength={2}
-                  className={cn([isError ? "border-destructive" : ""])}
-                  value={field.value as string || ""}
-                  onChange={(e) => field.onChange(e.target.value)}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                  aria-invalid={isError}
-                  aria-describedby={ariaDescribedby}
-                />
-              )}
-            />
-            <FormController
-              form={form}
-              name="code3"
-              label="ISO Code (3 letters)"
-              render={({ field, isError, ariaDescribedby }) => (
-                <Input
-                  id={field.name}
-                  type="text"
-                  placeholder="CAN"
-                  maxLength={3}
-                  className={cn([isError ? "border-destructive" : ""])}
-                  value={field.value as string || ""}
-                  onChange={(e) => field.onChange(e.target.value)}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                  aria-invalid={isError}
-                  aria-describedby={ariaDescribedby}
-                />
-              )}
-            />
-          </div>
+          <FormController
+            form={form}
+            name="subdivisionCode"
+            label="Subdivision Code (ISO 3166-2)"
+            render={({ field, isError, ariaDescribedby }) => (
+              <Input
+                id={field.name}
+                type="text"
+                placeholder="e.g. CA or US-CA"
+                className={cn([isError ? "border-destructive" : ""])}
+                value={field.value as string || ""}
+                onChange={(e) => field.onChange(e.target.value)}
+                onBlur={field.onBlur}
+                name={field.name}
+                ref={field.ref}
+                aria-invalid={isError}
+                aria-describedby={ariaDescribedby}
+              />
+            )}
+          />
           <FormController
             form={form}
             name="tz"

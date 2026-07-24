@@ -7,7 +7,9 @@ import {
 
 import api from "@/api/api";
 import {
+  type ApiUserCreate,
   type ApiUserGetAllParams,
+  type ApiUserUpdate,
 } from "@/api/user-api";
 import { QueryClient } from "@tanstack/react-query";
 
@@ -39,6 +41,49 @@ export const userQuery = (queryClient: QueryClient) => ({
   get: (id: string) => queryClient.fetchQuery(getOptions(id)),
   useGet: (id: string) => useQuery(getOptions(id)),
 
+  // create
+  useCreate: () =>
+    useMutation({
+      mutationFn: (data: ApiUserCreate) => api.user.create(data),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: userQueryKey }),
+    }),
+  create: async (data: ApiUserCreate) => {
+    const result = await api.user.create(data);
+    queryClient.invalidateQueries({ queryKey: userQueryKey });
+    return result;
+  },
+
+  // create many
+  useCreateMany: () =>
+    useMutation({
+      mutationFn: (data: ApiUserCreate[]) => api.user.createMany(data),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: userQueryKey }),
+    }),
+  createMany: async (data: ApiUserCreate[]) => {
+    const result = await api.user.createMany(data);
+    queryClient.invalidateQueries({ queryKey: userQueryKey });
+    return result;
+  },
+
+  // update
+  useUpdate: () =>
+    useMutation({
+      mutationFn: ({ id, data }: { id: string; data: ApiUserUpdate }) =>
+        api.user.update(id, data),
+      onSuccess: (_, { id }) => {
+        queryClient.invalidateQueries({ queryKey: userQueryKey });
+        queryClient.invalidateQueries({ queryKey: [...userQueryKey, id] });
+      },
+    }),
+  update: async ({ id, data }: { id: string; data: ApiUserUpdate }) => {
+    const result = await api.user.update(id, data);
+    queryClient.invalidateQueries({ queryKey: userQueryKey });
+    queryClient.invalidateQueries({ queryKey: [...userQueryKey, id] });
+    return result;
+  },
+
   // delete
   useDelete: () =>
     useMutation({
@@ -65,3 +110,4 @@ export const userQuery = (queryClient: QueryClient) => ({
     return result;
   },
 });
+

@@ -2,17 +2,44 @@ import { qString } from "@/lib/utils"
 import type { ApiNormalResponse, TableConfigType } from "@/types/generic-type"
 import type { AxiosInstance, AxiosRequestConfig } from "axios"
 import { unwrapApiError } from "./api-utils"
+import type { CountryType } from "./country-api"
+import type { StateType } from "./state-api"
+
+export type UserRole = "SUPERUSER" | "GUEST" | "STORE_MANAGER" | "STAFF" | "CUSTOMER"
 
 export type UserType = {
   id: string
   email: string
   firstName: string
-  lastName?: string
-  profileImage?: string
-  role: "guest" | "SUPERUSER"
+  lastName?: string | null
+  profileImage?: string | null
+  role: UserRole
+  salary?: number | null
+  countryId?: string | null
+  country?: CountryType | null
+  stateId?: string | null
+  state?: StateType | null
+  address?: string | null
+  zip?: string | null
   createdAt: string
   updatedAt: string
 }
+
+export type ApiUserCreate = {
+  email: string
+  firstName: string
+  lastName?: string | null
+  password?: string | null
+  profileImage?: string | null
+  role?: UserRole
+  salary?: number | null
+  countryId?: string | null
+  stateId?: string | null
+  address?: string | null
+  zip?: string | null
+}
+
+export type ApiUserUpdate = Partial<ApiUserCreate>
 
 export type ApiUserGetAll = ApiNormalResponse & {
   data: UserType[]
@@ -23,6 +50,10 @@ export type ApiUserGetAll = ApiNormalResponse & {
 export type ApiUserGet = ApiNormalResponse & { data: UserType }
 export type ApiUserDeleteMany = ApiNormalResponse & {
   data: { count: number }
+}
+export type ApiUserCreateMany = ApiNormalResponse & {
+  data: { success: UserType[]; failed: any[] }
+  info: { success: number; failed: number }
 }
 
 export type ApiUserGetAllParams = {
@@ -53,6 +84,30 @@ export const userAPI = (axiosInstance: AxiosInstance) => ({
       return response.data
     }),
 
+  create: (data: ApiUserCreate, config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.post<ApiUserGet>(
+        "/user",
+        data,
+        config
+      )
+      return response.data
+    }),
+
+  update: (
+    id: string,
+    data: ApiUserUpdate,
+    config?: AxiosRequestConfig
+  ) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.put<ApiUserGet>(
+        `/user/${id}`,
+        data,
+        config
+      )
+      return response.data
+    }),
+
   delete: (id: string, config?: AxiosRequestConfig) =>
     unwrapApiError(async () => {
       const response = await axiosInstance.delete<ApiNormalResponse>(
@@ -71,4 +126,15 @@ export const userAPI = (axiosInstance: AxiosInstance) => ({
       )
       return response.data
     }),
+
+  createMany: (data: ApiUserCreate[], config?: AxiosRequestConfig) =>
+    unwrapApiError(async () => {
+      const response = await axiosInstance.post<ApiUserCreateMany>(
+        "/user/many",
+        data,
+        config
+      )
+      return response.data
+    }),
 })
+

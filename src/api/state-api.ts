@@ -9,8 +9,7 @@ export type StateType = {
   name: string;
   countryId: string;
   country: CountryType;
-  code2: string;
-  code3: string;
+  subdivisionCode: string;
   tz: string | null;
   flag: string | null;
   createdAt: string;
@@ -20,8 +19,7 @@ export type StateType = {
 export type ApiStateCreate = {
   name: string;
   countryId: string;
-  code2: string;
-  code3: string;
+  subdivisionCode: string;
   tz?: string | null;
   flag?: string | null;
 };

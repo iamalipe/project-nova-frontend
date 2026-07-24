@@ -12,8 +12,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
+import { Textarea } from "@/components/ui/textarea"
 import apiQuery from "@/hooks/use-api-query"
 import useQueryLoadingState from "@/hooks/use-query-loading-state"
 import { handleFormError } from "@/lib/form"
@@ -23,10 +23,10 @@ import { faker } from "@faker-js/faker"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "@tanstack/react-router"
 import { DicesIcon } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm, type Resolver } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { useState, useEffect, useMemo } from "react"
 import DialogSkeleton from "./dialog-skeleton"
 import DialogViewMode from "./dialog-view-mode"
 
@@ -77,7 +77,12 @@ type DialogMainProps = ProductDialogProps & {
   subcategories: { id: string; name: string; categoryId: string }[]
 }
 
-const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps) => {
+const DialogMain = ({
+  data,
+  state,
+  categories,
+  subcategories,
+}: DialogMainProps) => {
   const navigate = useNavigate()
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("")
 
@@ -99,6 +104,7 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
   // Set initial category based on subcategory
   useEffect(() => {
     if (data?.subcategory?.categoryId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedCategoryId(data.subcategory.categoryId)
     } else if (categories.length > 0) {
       setSelectedCategoryId(categories[0].id)
@@ -108,7 +114,9 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
   // Automatically update the subcategoryId default value if starting fresh
   useEffect(() => {
     if (!state.id && selectedCategoryId && subcategories.length > 0) {
-      const firstSub = subcategories.find(s => s.categoryId === selectedCategoryId)
+      const firstSub = subcategories.find(
+        (s) => s.categoryId === selectedCategoryId
+      )
       if (firstSub && !form.getValues("subcategoryId")) {
         form.setValue("subcategoryId", firstSub.id)
       }
@@ -124,7 +132,9 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
     setSelectedCategoryId(catId)
     const matchingSubs = subcategories.filter((s) => s.categoryId === catId)
     if (matchingSubs.length > 0) {
-      form.setValue("subcategoryId", matchingSubs[0].id, { shouldValidate: true })
+      form.setValue("subcategoryId", matchingSubs[0].id, {
+        shouldValidate: true,
+      })
     } else {
       form.setValue("subcategoryId", "", { shouldValidate: true })
     }
@@ -132,7 +142,8 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
 
   const generateFakeData = () => {
     if (subcategories.length === 0) return
-    const randomSub = subcategories[Math.floor(Math.random() * subcategories.length)]
+    const randomSub =
+      subcategories[Math.floor(Math.random() * subcategories.length)]
     setSelectedCategoryId(randomSub.categoryId)
     form.reset({
       name: faker.commerce.productName(),
@@ -158,7 +169,8 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
   const onSubmit = async (values: FormSchemaType) => {
     try {
       const res = await apiQuery.product.create(values)
-      if (!res.success) throw new Error("Something went wrong, please try again.")
+      if (!res.success)
+        throw new Error("Something went wrong, please try again.")
       toast.success("Product added successfully.")
       onClose()
     } catch (err: any) {
@@ -173,7 +185,8 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
         id: state.id,
         data: values,
       })
-      if (!res.success) throw new Error("Something went wrong, please try again.")
+      if (!res.success)
+        throw new Error("Something went wrong, please try again.")
 
       toast.success("Product updated successfully.")
       onClose()
@@ -193,7 +206,8 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
         <DialogHeader className="mb-2">
           <DialogTitle>Product</DialogTitle>
           <DialogDescription>
-            Create or edit Product listings. SKU is auto-generated prefixing the parent Subcategory SKU.
+            Create or edit Product listings. SKU is auto-generated prefixing the
+            parent Subcategory SKU.
           </DialogDescription>
         </DialogHeader>
         {state.mode === "CREATE" && (
@@ -209,7 +223,7 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
             </Button>
           </div>
         )}
-        <div className="grid gap-2 md:gap-4 max-h-[55vh] overflow-y-auto pr-1">
+        <div className="grid max-h-[55vh] gap-2 overflow-y-auto px-1 md:gap-4">
           {/* name */}
           <FormController
             form={form}
@@ -263,7 +277,9 @@ const DialogMain = ({ data, state, categories, subcategories }: DialogMainProps)
                   aria-describedby={ariaDescribedby}
                 >
                   {filteredSubcategories.length === 0 && (
-                    <NativeSelectOption value="">Select a category first</NativeSelectOption>
+                    <NativeSelectOption value="">
+                      Select a category first
+                    </NativeSelectOption>
                   )}
                   {filteredSubcategories.map((s) => (
                     <NativeSelectOption key={s.id} value={s.id}>

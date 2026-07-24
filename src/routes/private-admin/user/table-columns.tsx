@@ -46,6 +46,36 @@ const tableColumns: DataTableColumn<UserType>[] = [
     isSortable: true,
   },
   {
+    label: "Salary",
+    key: "salary",
+    render: (record) => (record.salary !== undefined && record.salary !== null ? `$${record.salary}` : "-"),
+    isSortable: true,
+  },
+  {
+    label: "Country",
+    key: "country",
+    render: (record) => (record.country ? `${record.country.flag} ${record.country.name}` : "-"),
+    isSortable: false,
+  },
+  {
+    label: "State",
+    key: "state",
+    render: (record) => (record.state ? record.state.name : "-"),
+    isSortable: false,
+  },
+  {
+    label: "Address",
+    key: "address",
+    render: (record) => record.address || "-",
+    isSortable: false,
+  },
+  {
+    label: "Zip",
+    key: "zip",
+    render: (record) => record.zip || "-",
+    isSortable: false,
+  },
+  {
     label: "Created At",
     key: "createdAt",
     render: (record) => formatDate(record.createdAt),
@@ -62,3 +92,4 @@ const tableColumns: DataTableColumn<UserType>[] = [
 ]
 
 export default tableColumns
+
