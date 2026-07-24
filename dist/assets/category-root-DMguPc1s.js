@@ -1,1 +1,270 @@
-import{G as e,r as t,z as n}from"./dist-CcA4xCvU.js";import{n as r,r as i,t as a}from"./search-input-Ffp-L872.js";import{t as o}from"./plus-DlnVAEFW.js";import{$ as s,A as c,C as l,D as u,E as d,It as f,M as p,Mt as m,N as h,O as g,P as _,Qt as v,T as y,X as b,Xt as x,Yt as S,Zt as C,_ as w,g as T,j as E,jt as D,k as O,t as k,v as A}from"./index-CARPuDSl.js";var j=e(),M=`/app/category`,N=`Category`,P=e=>{let{dataTable:n,rawQuery:i}=e,s=i.data;if(!s)throw Error(`Something wrong`);let c=C({from:M}),l=v({from:M}),{data:u}=S.auth.useGetCurrentUser(),d=u?.data?.role===`superuser`,p=async()=>{await i.refetch()},h=async()=>{let e=m(k,{dialog:N,mode:`CREATE`});e&&c({search:t=>({...t,ds:e})})},g=async()=>{let e=m(k,{dialog:N,mode:`IMPORT`});e&&c({search:t=>({...t,ds:e})})},_=async()=>{let e=m(k,{dialog:N,mode:`VIEW-ALL`});e&&c({search:t=>({...t,ds:e})})},y=async e=>{c({search:t=>({...t,search:e})})},x=s.config||{search:!0,searchPlaceholder:`Search...`};return(0,j.jsxs)(`div`,{className:`flex flex-none justify-between`,children:[(0,j.jsxs)(`div`,{className:`flex gap-2`,children:[(0,j.jsx)(b,{variant:`outline`}),x.search&&(0,j.jsx)(a,{value:l.search,onChange:y,placeholder:x.searchPlaceholder})]}),(0,j.jsxs)(`div`,{className:`flex gap-2`,children:[(0,j.jsx)(t,{title:`All Categories`,variant:`outline`,onClick:_,children:`All Categories`}),d&&(0,j.jsxs)(j.Fragment,{children:[(0,j.jsx)(t,{title:`Create New`,size:`icon`,variant:`outline`,"data-testid":`create-new-button`,onClick:h,children:(0,j.jsx)(o,{})}),(0,j.jsx)(t,{title:`Import CSV`,size:`icon`,variant:`outline`,onClick:g,children:(0,j.jsx)(f,{})})]}),(0,j.jsx)(D,{title:`Refresh`,variant:`outline`,onClick:p,"data-testid":`refresh-button`}),(0,j.jsx)(r,{dataTable:n})]})]})},F=`/app/category`,I=({rawQuery:e})=>{let t=e.data;if(!t)throw Error(`Something wrong`);let n=i(`category`),r=y({initialPageSize:t.pagination.limit,initialPageIndex:t.pagination.page,routeFrom:F}),a=l({initialSort:t.sort,routeFrom:F}),o=d({data:t.data,columns:T,rowCount:t.pagination.total,paginationState:r.state,columnVisibility:n.state,onToggleVisibilityChange:n.toggleVisibility,sortState:a.state,onPaginationChange:r.onPaginationChange,onSortingChange:a.onSortChange});return(0,j.jsxs)(j.Fragment,{children:[(0,j.jsxs)(`main`,{className:`flex-1 overflow-hidden flex flex-col p-2 pl-0 gap-2`,children:[(0,j.jsx)(P,{rawQuery:e,dataTable:o}),(0,j.jsx)(g,{dataTable:o,contextMenu:e=>(0,j.jsx)(w,{data:e})}),(0,j.jsx)(u,{dataTable:o}),(0,j.jsx)(A,{})]}),(0,j.jsx)(x,{})]})},L=()=>(0,j.jsxs)(`main`,{className:`flex-1 overflow-hidden flex flex-col p-2 pl-0 gap-2 animate-pulse`,children:[(0,j.jsxs)(`div`,{className:`flex flex-none justify-between items-center`,children:[(0,j.jsxs)(`div`,{className:`flex items-center gap-2`,children:[(0,j.jsx)(s,{className:`h-10 w-10 border rounded-md`}),(0,j.jsx)(s,{className:`h-10 w-48 md:w-64 border rounded-md`})]}),(0,j.jsxs)(`div`,{className:`flex items-center gap-2`,children:[(0,j.jsx)(s,{className:`h-10 w-24 border rounded-md`}),(0,j.jsx)(s,{className:`h-10 w-10 border rounded-md`}),(0,j.jsx)(s,{className:`h-10 w-10 border rounded-md`}),(0,j.jsx)(s,{className:`h-10 w-10 border rounded-md`})]})]}),(0,j.jsxs)(O,{children:[(0,j.jsx)(h,{className:`z-10`,children:(0,j.jsxs)(_,{className:`border-b-0 table-header-box-shadow`,children:[(0,j.jsx)(p,{className:`w-10`,children:(0,j.jsx)(s,{className:`h-4 w-4 rounded`})}),(0,j.jsx)(p,{children:`Name`}),(0,j.jsx)(p,{children:`SKU`}),(0,j.jsx)(p,{children:`Description`}),(0,j.jsx)(p,{children:`Created At`}),(0,j.jsx)(p,{className:`w-10`,children:`Action`})]})}),(0,j.jsx)(c,{children:Array.from({length:5}).map((e,t)=>(0,j.jsxs)(_,{children:[(0,j.jsx)(E,{className:`w-10`,children:(0,j.jsx)(s,{className:`h-4 w-4 rounded`})}),(0,j.jsx)(E,{className:`font-bold`,children:(0,j.jsx)(s,{className:`h-4 w-32`})}),(0,j.jsx)(E,{children:(0,j.jsx)(s,{className:`h-4 w-12`})}),(0,j.jsx)(E,{children:(0,j.jsx)(s,{className:`h-4 w-48`})}),(0,j.jsx)(E,{children:(0,j.jsx)(s,{className:`h-4 w-28`})}),(0,j.jsx)(E,{className:`w-10`,children:(0,j.jsx)(s,{className:`h-8 w-8 rounded-full`})})]},t))})]}),(0,j.jsxs)(`div`,{className:`flex md:items-center md:flex-row flex-col justify-between px-2 py-1 flex-none gap-2`,children:[(0,j.jsx)(`div`,{className:`text-xs text-muted-foreground flex items-center`,children:(0,j.jsx)(s,{className:`h-4 w-44`})}),(0,j.jsxs)(`div`,{className:`flex md:items-center gap-2`,children:[(0,j.jsx)(s,{className:`h-8 w-20 border rounded-md`}),(0,j.jsx)(s,{className:`h-8 w-32 border rounded-md`})]})]})]}),R=()=>{let e=n(v({from:`/app/category`}),[`ds`]),t=S.category.useGetAll(e);return t.isLoading?(0,j.jsxs)(j.Fragment,{children:[(0,j.jsx)(L,{}),(0,j.jsx)(x,{})]}):(0,j.jsxs)(j.Fragment,{children:[(0,j.jsx)(I,{rawQuery:t}),(0,j.jsx)(x,{})]})};export{R as default};
+import { G as e, z as n, r as t } from "./dist-CcA4xCvU.js"
+import {
+  v as A,
+  Zt as C,
+  jt as D,
+  j as E,
+  k as O,
+  Yt as S,
+  g as T,
+  P as _,
+  X as b,
+  A as c,
+  E as d,
+  It as f,
+  O as g,
+  N as h,
+  t as k,
+  C as l,
+  Mt as m,
+  M as p,
+  $ as s,
+  D as u,
+  Qt as v,
+  _ as w,
+  Xt as x,
+  T as y,
+} from "./index-CARPuDSl.js"
+import { t as o } from "./plus-DlnVAEFW.js"
+import { t as a, r as i, n as r } from "./search-input-Ffp-L872.js"
+var j = e(),
+  M = `/app/category`,
+  N = `Category`,
+  P = (e) => {
+    let { dataTable: n, rawQuery: i } = e,
+      s = i.data
+    if (!s) throw Error(`Something wrong`)
+    let c = C({ from: M }),
+      l = v({ from: M }),
+      { data: u } = S.auth.useGetCurrentUser(),
+      d = u?.data?.role === `SUPERUSER`,
+      p = async () => {
+        await i.refetch()
+      },
+      h = async () => {
+        let e = m(k, { dialog: N, mode: `CREATE` })
+        e && c({ search: (t) => ({ ...t, ds: e }) })
+      },
+      g = async () => {
+        let e = m(k, { dialog: N, mode: `IMPORT` })
+        e && c({ search: (t) => ({ ...t, ds: e }) })
+      },
+      _ = async () => {
+        let e = m(k, { dialog: N, mode: `VIEW-ALL` })
+        e && c({ search: (t) => ({ ...t, ds: e }) })
+      },
+      y = async (e) => {
+        c({ search: (t) => ({ ...t, search: e }) })
+      },
+      x = s.config || { search: !0, searchPlaceholder: `Search...` }
+    return (0, j.jsxs)(`div`, {
+      className: `flex flex-none justify-between`,
+      children: [
+        (0, j.jsxs)(`div`, {
+          className: `flex gap-2`,
+          children: [
+            (0, j.jsx)(b, { variant: `outline` }),
+            x.search &&
+              (0, j.jsx)(a, {
+                value: l.search,
+                onChange: y,
+                placeholder: x.searchPlaceholder,
+              }),
+          ],
+        }),
+        (0, j.jsxs)(`div`, {
+          className: `flex gap-2`,
+          children: [
+            (0, j.jsx)(t, {
+              title: `All Categories`,
+              variant: `outline`,
+              onClick: _,
+              children: `All Categories`,
+            }),
+            d &&
+              (0, j.jsxs)(j.Fragment, {
+                children: [
+                  (0, j.jsx)(t, {
+                    title: `Create New`,
+                    size: `icon`,
+                    variant: `outline`,
+                    "data-testid": `create-new-button`,
+                    onClick: h,
+                    children: (0, j.jsx)(o, {}),
+                  }),
+                  (0, j.jsx)(t, {
+                    title: `Import CSV`,
+                    size: `icon`,
+                    variant: `outline`,
+                    onClick: g,
+                    children: (0, j.jsx)(f, {}),
+                  }),
+                ],
+              }),
+            (0, j.jsx)(D, {
+              title: `Refresh`,
+              variant: `outline`,
+              onClick: p,
+              "data-testid": `refresh-button`,
+            }),
+            (0, j.jsx)(r, { dataTable: n }),
+          ],
+        }),
+      ],
+    })
+  },
+  F = `/app/category`,
+  I = ({ rawQuery: e }) => {
+    let t = e.data
+    if (!t) throw Error(`Something wrong`)
+    let n = i(`category`),
+      r = y({
+        initialPageSize: t.pagination.limit,
+        initialPageIndex: t.pagination.page,
+        routeFrom: F,
+      }),
+      a = l({ initialSort: t.sort, routeFrom: F }),
+      o = d({
+        data: t.data,
+        columns: T,
+        rowCount: t.pagination.total,
+        paginationState: r.state,
+        columnVisibility: n.state,
+        onToggleVisibilityChange: n.toggleVisibility,
+        sortState: a.state,
+        onPaginationChange: r.onPaginationChange,
+        onSortingChange: a.onSortChange,
+      })
+    return (0, j.jsxs)(j.Fragment, {
+      children: [
+        (0, j.jsxs)(`main`, {
+          className: `flex-1 overflow-hidden flex flex-col p-2 pl-0 gap-2`,
+          children: [
+            (0, j.jsx)(P, { rawQuery: e, dataTable: o }),
+            (0, j.jsx)(g, {
+              dataTable: o,
+              contextMenu: (e) => (0, j.jsx)(w, { data: e }),
+            }),
+            (0, j.jsx)(u, { dataTable: o }),
+            (0, j.jsx)(A, {}),
+          ],
+        }),
+        (0, j.jsx)(x, {}),
+      ],
+    })
+  },
+  L = () =>
+    (0, j.jsxs)(`main`, {
+      className: `flex-1 overflow-hidden flex flex-col p-2 pl-0 gap-2 animate-pulse`,
+      children: [
+        (0, j.jsxs)(`div`, {
+          className: `flex flex-none justify-between items-center`,
+          children: [
+            (0, j.jsxs)(`div`, {
+              className: `flex items-center gap-2`,
+              children: [
+                (0, j.jsx)(s, { className: `h-10 w-10 border rounded-md` }),
+                (0, j.jsx)(s, {
+                  className: `h-10 w-48 md:w-64 border rounded-md`,
+                }),
+              ],
+            }),
+            (0, j.jsxs)(`div`, {
+              className: `flex items-center gap-2`,
+              children: [
+                (0, j.jsx)(s, { className: `h-10 w-24 border rounded-md` }),
+                (0, j.jsx)(s, { className: `h-10 w-10 border rounded-md` }),
+                (0, j.jsx)(s, { className: `h-10 w-10 border rounded-md` }),
+                (0, j.jsx)(s, { className: `h-10 w-10 border rounded-md` }),
+              ],
+            }),
+          ],
+        }),
+        (0, j.jsxs)(O, {
+          children: [
+            (0, j.jsx)(h, {
+              className: `z-10`,
+              children: (0, j.jsxs)(_, {
+                className: `border-b-0 table-header-box-shadow`,
+                children: [
+                  (0, j.jsx)(p, {
+                    className: `w-10`,
+                    children: (0, j.jsx)(s, { className: `h-4 w-4 rounded` }),
+                  }),
+                  (0, j.jsx)(p, { children: `Name` }),
+                  (0, j.jsx)(p, { children: `SKU` }),
+                  (0, j.jsx)(p, { children: `Description` }),
+                  (0, j.jsx)(p, { children: `Created At` }),
+                  (0, j.jsx)(p, { className: `w-10`, children: `Action` }),
+                ],
+              }),
+            }),
+            (0, j.jsx)(c, {
+              children: Array.from({ length: 5 }).map((e, t) =>
+                (0, j.jsxs)(
+                  _,
+                  {
+                    children: [
+                      (0, j.jsx)(E, {
+                        className: `w-10`,
+                        children: (0, j.jsx)(s, {
+                          className: `h-4 w-4 rounded`,
+                        }),
+                      }),
+                      (0, j.jsx)(E, {
+                        className: `font-bold`,
+                        children: (0, j.jsx)(s, { className: `h-4 w-32` }),
+                      }),
+                      (0, j.jsx)(E, {
+                        children: (0, j.jsx)(s, { className: `h-4 w-12` }),
+                      }),
+                      (0, j.jsx)(E, {
+                        children: (0, j.jsx)(s, { className: `h-4 w-48` }),
+                      }),
+                      (0, j.jsx)(E, {
+                        children: (0, j.jsx)(s, { className: `h-4 w-28` }),
+                      }),
+                      (0, j.jsx)(E, {
+                        className: `w-10`,
+                        children: (0, j.jsx)(s, {
+                          className: `h-8 w-8 rounded-full`,
+                        }),
+                      }),
+                    ],
+                  },
+                  t
+                )
+              ),
+            }),
+          ],
+        }),
+        (0, j.jsxs)(`div`, {
+          className: `flex md:items-center md:flex-row flex-col justify-between px-2 py-1 flex-none gap-2`,
+          children: [
+            (0, j.jsx)(`div`, {
+              className: `text-xs text-muted-foreground flex items-center`,
+              children: (0, j.jsx)(s, { className: `h-4 w-44` }),
+            }),
+            (0, j.jsxs)(`div`, {
+              className: `flex md:items-center gap-2`,
+              children: [
+                (0, j.jsx)(s, { className: `h-8 w-20 border rounded-md` }),
+                (0, j.jsx)(s, { className: `h-8 w-32 border rounded-md` }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+  R = () => {
+    let e = n(v({ from: `/app/category` }), [`ds`]),
+      t = S.category.useGetAll(e)
+    return t.isLoading
+      ? (0, j.jsxs)(j.Fragment, {
+          children: [(0, j.jsx)(L, {}), (0, j.jsx)(x, {})],
+        })
+      : (0, j.jsxs)(j.Fragment, {
+          children: [(0, j.jsx)(I, { rawQuery: t }), (0, j.jsx)(x, {})],
+        })
+  }
+export { R as default }

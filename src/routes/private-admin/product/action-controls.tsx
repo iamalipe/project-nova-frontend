@@ -1,85 +1,85 @@
-import type { ApiProductGetAll } from "@/api/product-api";
-import { AsyncRefreshButton } from "@/components/custom/async-button";
-import ColumnsViewControls from "@/components/data-table/columns-view-controls";
-import SearchInput from "@/components/data-table/search-input";
-import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import type { DataTableType } from "@/hooks/use-data-table";
-import { validateAndStringify } from "@/lib/generic-validation";
-import type { ApiNormalResponse, TableConfigType } from "@/types/generic-type";
-import type { UseQueryResult } from "@tanstack/react-query";
-import { useNavigate, useSearch } from "@tanstack/react-router";
-import { Plus, Upload } from "lucide-react";
-import { dialogStateZodSchema } from "../private-admin-route";
-import apiQuery from "@/hooks/use-api-query";
-import { ProductFilterSheet } from "./product-filter-sheet";
+import type { ApiProductGetAll } from "@/api/product-api"
+import { AsyncRefreshButton } from "@/components/custom/async-button"
+import ColumnsViewControls from "@/components/data-table/columns-view-controls"
+import SearchInput from "@/components/data-table/search-input"
+import { Button } from "@/components/ui/button"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import apiQuery from "@/hooks/use-api-query"
+import type { DataTableType } from "@/hooks/use-data-table"
+import { validateAndStringify } from "@/lib/generic-validation"
+import type { ApiNormalResponse, TableConfigType } from "@/types/generic-type"
+import type { UseQueryResult } from "@tanstack/react-query"
+import { useNavigate, useSearch } from "@tanstack/react-router"
+import { Plus, Upload } from "lucide-react"
+import { dialogStateZodSchema } from "../private-admin-route"
+import { ProductFilterSheet } from "./product-filter-sheet"
 
-const PRODUCT_ROUTE_FROM = "/app/product";
-const PRODUCT_DIALOG = "Product";
+const PRODUCT_ROUTE_FROM = "/app/product"
+const PRODUCT_DIALOG = "Product"
 
 export type ActionControlsProps<T> = {
-  dataTable: DataTableType<T>;
-  rawQuery: UseQueryResult<ApiProductGetAll, ApiNormalResponse | Error>;
-};
+  dataTable: DataTableType<T>
+  rawQuery: UseQueryResult<ApiProductGetAll, ApiNormalResponse | Error>
+}
 
 const ActionControls = <T,>(props: ActionControlsProps<T>) => {
-  const { dataTable, rawQuery } = props;
-  const queryData = rawQuery.data;
-  if (!queryData) throw Error("Something wrong");
+  const { dataTable, rawQuery } = props
+  const queryData = rawQuery.data
+  if (!queryData) throw Error("Something wrong")
 
-  const navigate = useNavigate({ from: PRODUCT_ROUTE_FROM });
+  const navigate = useNavigate({ from: PRODUCT_ROUTE_FROM })
   const searchParam = useSearch({
     from: PRODUCT_ROUTE_FROM,
-  });
+  })
 
-  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser();
-  const isSuperuser = currentUserRes?.data?.role === "superuser";
+  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
+  const isSUPERUSER = currentUserRes?.data?.role === "SUPERUSER"
 
   const onRefresh = async () => {
-    await rawQuery.refetch();
-  };
+    await rawQuery.refetch()
+  }
 
   const onCreate = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: PRODUCT_DIALOG,
       mode: "CREATE",
-    });
-    if (!ds) return;
+    })
+    if (!ds) return
     navigate({
       search: (prev) => ({
         ...prev,
         ds: ds,
       }),
-    });
-  };
+    })
+  }
 
   const onImport = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: PRODUCT_DIALOG,
       mode: "IMPORT",
-    });
-    if (!ds) return;
+    })
+    if (!ds) return
     navigate({
       search: (prev) => ({
         ...prev,
         ds: ds,
       }),
-    });
-  };
+    })
+  }
 
   const onAllProducts = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
       dialog: PRODUCT_DIALOG,
       mode: "VIEW-ALL",
-    });
-    if (!ds) return;
+    })
+    if (!ds) return
     navigate({
       search: (prev) => ({
         ...prev,
         ds: ds,
       }),
-    });
-  };
+    })
+  }
 
   const onSearchChange = async (searchValue: string) => {
     navigate({
@@ -87,13 +87,13 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
         ...prev,
         search: searchValue,
       }),
-    });
-  };
+    })
+  }
 
   const tableConfig: TableConfigType = queryData.config || {
     search: true,
     searchPlaceholder: "Search...",
-  };
+  }
 
   return (
     <div className="flex flex-none justify-between">
@@ -112,7 +112,7 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
         <Button title="All Products" variant="outline" onClick={onAllProducts}>
           All Products
         </Button>
-        {isSuperuser && (
+        {isSUPERUSER && (
           <>
             <Button
               title="Create New"
@@ -142,7 +142,7 @@ const ActionControls = <T,>(props: ActionControlsProps<T>) => {
         <ColumnsViewControls dataTable={dataTable} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ActionControls;
+export default ActionControls

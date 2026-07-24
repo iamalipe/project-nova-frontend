@@ -78,7 +78,7 @@ export const TableAction = ({ data }: { data: CategoryType }) => {
   const isMobile = useIsMobile()
   const { onView, onUpdate, onDelete } = useCategoryRowActions(data)
   const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
-  const isSuperuser = currentUserRes?.data?.role === "superuser"
+  const isSUPERUSER = currentUserRes?.data?.role === "SUPERUSER"
 
   if (isMobile) {
     return (
@@ -86,7 +86,7 @@ export const TableAction = ({ data }: { data: CategoryType }) => {
         <Button onClick={onView} size="sm" variant="outline">
           View
         </Button>
-        {isSuperuser && (
+        {isSUPERUSER && (
           <>
             <Button onClick={onUpdate} size="sm" variant="outline">
               Update
@@ -114,7 +114,7 @@ export const TableAction = ({ data }: { data: CategoryType }) => {
           <DropdownMenuLabel>Action</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
-          {isSuperuser && (
+          {isSUPERUSER && (
             <>
               <DropdownMenuItem onClick={onUpdate}>Update</DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" onClick={onDelete}>
@@ -131,7 +131,7 @@ export const TableAction = ({ data }: { data: CategoryType }) => {
 export const TableActionContextMenu = ({ data }: { data: CategoryType }) => {
   const { onView, onUpdate, onDelete } = useCategoryRowActions(data)
   const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
-  const isSuperuser = currentUserRes?.data?.role === "superuser"
+  const isSUPERUSER = currentUserRes?.data?.role === "SUPERUSER"
 
   return (
     <ContextMenuContent>
@@ -139,7 +139,7 @@ export const TableActionContextMenu = ({ data }: { data: CategoryType }) => {
         <ContextMenuLabel>Action</ContextMenuLabel>
         <ContextMenuSeparator />
         <ContextMenuItem onClick={onView}>View</ContextMenuItem>
-        {isSuperuser && (
+        {isSUPERUSER && (
           <>
             <ContextMenuItem onClick={onUpdate}>Update</ContextMenuItem>
             <ContextMenuItem className="text-destructive" onClick={onDelete}>
@@ -162,7 +162,7 @@ export const TableRowsSelect = ({
   const { isRowSelect, toggleRowSelect, selectedRows } =
     useTableRowsSelect("category")
   const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
-  const isSuperuser = currentUserRes?.data?.role === "superuser"
+  const isSUPERUSER = currentUserRes?.data?.role === "SUPERUSER"
 
   const checkedState: boolean | "indeterminate" | undefined =
     type === "header" && selectedRows.length > 0
@@ -175,13 +175,20 @@ export const TableRowsSelect = ({
   const checked = indeterminate ? false : (checkedState as boolean | undefined)
 
   const onCheckedChange = () => {
-    if (type === "row" && data && isSuperuser) {
+    if (type === "row" && data && isSUPERUSER) {
       toggleRowSelect(data.id)
     }
   }
 
-  if (!isSuperuser && type === "row") {
-    return <Checkbox checked={false} disabled aria-label="Select row disabled" className="translate-y-[2px]" />
+  if (!isSUPERUSER && type === "row") {
+    return (
+      <Checkbox
+        checked={false}
+        disabled
+        aria-label="Select row disabled"
+        className="translate-y-[2px]"
+      />
+    )
   }
 
   return (
@@ -191,7 +198,7 @@ export const TableRowsSelect = ({
       onCheckedChange={onCheckedChange}
       aria-label={type === "header" ? "Select All" : "Select row"}
       className="translate-y-[2px]"
-      disabled={!isSuperuser}
+      disabled={!isSUPERUSER}
     />
   )
 }

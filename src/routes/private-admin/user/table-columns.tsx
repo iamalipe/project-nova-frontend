@@ -1,7 +1,7 @@
-import type { UserType } from "@/api/user-api";
-import type { DataTableColumn } from "@/hooks/use-data-table";
-import { formatDate } from "@/lib/date-time";
-import { TableAction, TableRowsSelect } from "./table-action";
+import type { UserType } from "@/api/user-api"
+import type { DataTableColumn } from "@/hooks/use-data-table"
+import { formatDate } from "@/lib/date-time"
+import { TableAction, TableRowsSelect } from "./table-action"
 
 const tableColumns: DataTableColumn<UserType>[] = [
   {
@@ -37,7 +37,9 @@ const tableColumns: DataTableColumn<UserType>[] = [
     label: "Role",
     key: "role",
     render: (record) => (
-      <span className={`px-2 py-1 rounded text-xs font-semibold ${record.role === "superuser" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+      <span
+        className={`rounded px-2 py-1 text-xs font-semibold ${record.role === "SUPERUSER" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+      >
         {record.role}
       </span>
     ),
@@ -57,6 +59,6 @@ const tableColumns: DataTableColumn<UserType>[] = [
     classNameHeader: "w-10",
     classNameRow: "w-10",
   },
-];
+]
 
-export default tableColumns;
+export default tableColumns

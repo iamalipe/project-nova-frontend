@@ -30,10 +30,10 @@ import { dialogStateZodSchema } from "../private-admin-route"
 
 const useUserRowActions = (data: UserType) => {
   const navigate = useNavigate({ from: "/app/user" })
-  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser();
-  const currentUser = currentUserRes?.data;
-  const isSuperuser = currentUser?.role === "superuser";
-  const isSelf = currentUser?.id === data.id;
+  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
+  const currentUser = currentUserRes?.data
+  const isSUPERUSER = currentUser?.role === "SUPERUSER"
+  const isSelf = currentUser?.id === data.id
 
   const onView = async () => {
     const ds = validateAndStringify(dialogStateZodSchema, {
@@ -64,14 +64,14 @@ const useUserRowActions = (data: UserType) => {
     }
   }
 
-  return { onView, onDelete, isSuperuser, isSelf }
+  return { onView, onDelete, isSUPERUSER, isSelf }
 }
 
 export const TableAction = ({ data }: { data: UserType }) => {
   const isMobile = useIsMobile()
-  const { onView, onDelete, isSuperuser, isSelf } = useUserRowActions(data)
+  const { onView, onDelete, isSUPERUSER, isSelf } = useUserRowActions(data)
 
-  const showDelete = isSuperuser && !isSelf;
+  const showDelete = isSUPERUSER && !isSelf
 
   if (isMobile) {
     return (
@@ -114,9 +114,9 @@ export const TableAction = ({ data }: { data: UserType }) => {
 }
 
 export const TableActionContextMenu = ({ data }: { data: UserType }) => {
-  const { onView, onDelete, isSuperuser, isSelf } = useUserRowActions(data)
+  const { onView, onDelete, isSUPERUSER, isSelf } = useUserRowActions(data)
 
-  const showDelete = isSuperuser && !isSelf;
+  const showDelete = isSUPERUSER && !isSelf
 
   return (
     <ContextMenuContent>
@@ -144,13 +144,13 @@ export const TableRowsSelect = ({
   const { isRowSelect, toggleRowSelect, selectedRows } =
     useTableRowsSelect("user")
 
-  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser();
-  const currentUser = currentUserRes?.data;
-  const isSuperuser = currentUser?.role === "superuser";
-  
+  const { data: currentUserRes } = apiQuery.auth.useGetCurrentUser()
+  const currentUser = currentUserRes?.data
+  const isSUPERUSER = currentUser?.role === "SUPERUSER"
+
   // Can't select self for deletion
-  const isSelf = data ? currentUser?.id === data.id : false;
-  const disabled = data ? isSelf || !isSuperuser : !isSuperuser;
+  const isSelf = data ? currentUser?.id === data.id : false
+  const disabled = data ? isSelf || !isSUPERUSER : !isSUPERUSER
 
   const checkedState: boolean | "indeterminate" | undefined =
     type === "header" && selectedRows.length > 0
@@ -169,7 +169,14 @@ export const TableRowsSelect = ({
   }
 
   if (disabled && type === "row") {
-    return <Checkbox checked={false} disabled aria-label="Select row disabled" className="translate-y-[2px]" />
+    return (
+      <Checkbox
+        checked={false}
+        disabled
+        aria-label="Select row disabled"
+        className="translate-y-[2px]"
+      />
+    )
   }
 
   return (

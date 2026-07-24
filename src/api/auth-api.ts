@@ -1,58 +1,61 @@
 // auth-api.ts
-import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
-import { normalizeApiError, unwrapApiError } from "./api-utils";
+import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios"
+import { normalizeApiError, unwrapApiError } from "./api-utils"
 
 export type LoginPayload = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
 
 export type LoginReturn = {
-  success: boolean;
-};
+  success: boolean
+}
 
 export type RegisterPayload = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
 
 export type RegisterReturn = {
-  success: boolean;
-};
+  success: boolean
+}
 
 export type ChangePasswordPayload = {
-  oldPassword: string;
-  newPassword: string;
-};
+  oldPassword: string
+  newPassword: string
+}
 
 export type UserSession = {
-  id: string;
-  ip?: string | null;
-  userAgent?: string | null;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-};
+  id: string
+  ip?: string | null
+  userAgent?: string | null
+  userId: string
+  createdAt: string
+  updatedAt: string
+}
 
 export type SessionsReturn = {
-  success: boolean;
-  data: UserSession[];
-};
+  success: boolean
+  data: UserSession[]
+}
+
+export type UserRole =
+  "SUPERUSER" | "GUEST" | "STORE_MANAGER" | "STAFF" | "CUSTOMER"
 
 export type CurrentUser = {
-  id: string;
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-  firstName: string;
-  lastName?: string;
-  profileImage?: string;
-  role: "guest" | "superuser";
-};
+  id: string
+  email: string
+  createdAt: string
+  updatedAt: string
+  firstName: string
+  lastName?: string
+  profileImage?: string
+  role: UserRole
+}
 export type CurrentUserReturn = {
-  success: boolean;
-  data: CurrentUser;
-};
+  success: boolean
+  data: CurrentUser
+}
 
 export const authAPI = (axiosInstance: AxiosInstance) => ({
   login: (data: LoginPayload, config?: AxiosRequestConfig) =>
@@ -61,8 +64,8 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
         "/auth/login",
         data,
         config
-      );
-      return response.data;
+      )
+      return response.data
     }),
 
   register: (data: RegisterPayload, config?: AxiosRequestConfig) =>
@@ -71,8 +74,8 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
         "/auth/register",
         data,
         config
-      );
-      return response.data;
+      )
+      return response.data
     }),
 
   // A 401 here just means "not logged in", so it resolves to null instead of
@@ -85,8 +88,8 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
       const response = await axiosInstance.get<CurrentUserReturn>(
         `/auth/me`,
         config
-      );
-      return response.data;
+      )
+      return response.data
     } catch {
       // if (axios.isAxiosError(error) && error.response?.status === 401) {
       //   return null;
@@ -98,13 +101,13 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
 
   logout: async (config?: AxiosRequestConfig): Promise<null> => {
     try {
-      const response = await axiosInstance.get<null>(`/auth/logout`, config);
-      return response.data;
+      const response = await axiosInstance.get<null>(`/auth/logout`, config)
+      return response.data
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
-        return null;
+        return null
       }
-      normalizeApiError(error);
+      normalizeApiError(error)
     }
   },
 
@@ -114,8 +117,8 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
         "/auth/profile",
         data,
         config
-      );
-      return response.data;
+      )
+      return response.data
     }),
 
   updateProfileImage: (formData: FormData, config?: AxiosRequestConfig) =>
@@ -130,8 +133,8 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
             "Content-Type": "multipart/form-data",
           },
         }
-      );
-      return response.data;
+      )
+      return response.data
     }),
 
   changePassword: (data: ChangePasswordPayload, config?: AxiosRequestConfig) =>
@@ -140,8 +143,8 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
         "/auth/change-password",
         data,
         config
-      );
-      return response.data;
+      )
+      return response.data
     }),
 
   getSessions: (config?: AxiosRequestConfig) =>
@@ -149,8 +152,8 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
       const response = await axiosInstance.get<SessionsReturn>(
         "/auth/sessions",
         config
-      );
-      return response.data.data;
+      )
+      return response.data.data
     }),
 
   deleteSession: (id: string, config?: AxiosRequestConfig) =>
@@ -158,7 +161,7 @@ export const authAPI = (axiosInstance: AxiosInstance) => ({
       const response = await axiosInstance.delete<{ success: boolean }>(
         `/auth/sessions/${id}`,
         config
-      );
-      return response.data;
+      )
+      return response.data
     }),
-});
+})
